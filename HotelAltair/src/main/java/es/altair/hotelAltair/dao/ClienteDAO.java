@@ -19,4 +19,5 @@ public interface ClienteDAO {
 	Cliente obtenerClienteporId(int idCliente);
 	
 	void ActualizarCliente(Cliente client);
+	
 }

@@ -4,12 +4,24 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.servlet.http.HttpSession;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import es.altair.hotelAltair.bean.Cliente;
+import es.altair.hotelAltair.dao.ClienteDAO;
+import es.altair.hotelAltair.dao.HabitacionDAO;
+import es.altair.hotelAltair.dao.ReservaDAO;
+import es.altair.hotelAltair.dao.TrabajadorDAO;
 
 /**
  * Handles requests for the application home page.
@@ -17,23 +29,66 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class HomeController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	@Autowired
+	private ClienteDAO clienteDAO;
 	
-	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
+	@Autowired
+	private HabitacionDAO habitacionDAO;
+	
+	@Autowired
+	private TrabajadorDAO trabajadorDAO;
+	
+	@Autowired
+	private ReservaDAO reservaDAO;
+	
+
+	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
+	public ModelAndView home(Model model, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
 		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		model.addAttribute("mensaje", mensaje);
+		model.addAttribute("listarH", habitacionDAO.listarHabitaciones());
 		
-		String formattedDate = dateFormat.format(date);
 		
-		model.addAttribute("serverTime", formattedDate );
-		
-		return "home";
+		return new ModelAndView("home", "cli", new Cliente());
 	}
+	
+	@RequestMapping(value = "/entrar", method = RequestMethod.POST)
+	public String entrar(@ModelAttribute Cliente clienteLogin, Model model, HttpSession session) {
+		
+		model.addAttribute("listarH", habitacionDAO.listarHabitaciones());
+		clienteLogin = clienteDAO.comprobarCliente(clienteLogin.getCorreo(), clienteLogin.getPassword());
+		
+		if(clienteLogin != null) {
+			session.setAttribute("clienteLogin", clienteLogin);
+			return "redirect:/home?mensaje=Sesion Iniciada Con exito";
+		}
+		
+		return "redirect:/?mensaje=Error en email o Password Incorrecto";
+		
+	}
+	
+	@RequestMapping(value="/registrar", method = RequestMethod.GET)
+	public ModelAndView registrar() {
+		
+		
+		return new ModelAndView("registrar", "reg", new Cliente());
+	}
+	
+	@RequestMapping(value = "/registrarse", method = RequestMethod.POST)
+	public String registrarse(@ModelAttribute Cliente clienteLogin,@RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		System.out.println(clienteLogin);
+		if(clienteDAO.validarEmail(clienteLogin)) 
+			clienteDAO.insertar(clienteLogin);
+		else {
+			return "redirect:/?mensaje=Usuario YA Registrado";
+		}
+		
+		return "redirect:/?mensaje=Usuario Registrado";
+		
+	}
+	
+	
 	
 }

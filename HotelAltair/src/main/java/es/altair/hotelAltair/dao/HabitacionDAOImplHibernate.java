@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.transaction.annotation.Transactional;
+import javax.transaction.Transactional;
 
 import es.altair.hotelAltair.bean.Habitacion;
 

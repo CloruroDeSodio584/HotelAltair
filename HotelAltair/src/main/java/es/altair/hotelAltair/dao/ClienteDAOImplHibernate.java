@@ -2,9 +2,11 @@ package es.altair.hotelAltair.dao;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import es.altair.hotelAltair.bean.Cliente;
 
@@ -49,18 +51,19 @@ public class ClienteDAOImplHibernate implements ClienteDAO {
 		Session sesion = sessionFactory.getCurrentSession();
 		boolean correcto = true;
 		
-		sesion.beginTransaction();
+	
 		
 		if( (Cliente) sesion.createQuery("FROM Cliente WHERE correo=:c")
 				.setParameter("c", client.getCorreo())
 				.uniqueResult() != null)
 			correcto = false;
 		
-		sesion.getTransaction().commit();
+		//sesion.getTransaction().commit();
 		
 		
 		return correcto;
 	}
+	
 
 	@Transactional
 	@Override
