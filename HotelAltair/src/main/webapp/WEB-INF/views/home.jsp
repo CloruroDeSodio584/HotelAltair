@@ -262,7 +262,7 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button onclick="window.location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
                     </div>
                 </div>
             </div>
@@ -283,7 +283,7 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button onclick="window.location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
                     </div>
                 </div>
             </div>
@@ -305,7 +305,7 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button onclick="window.location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
                     </div>
                 </div>
             </div>

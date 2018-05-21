@@ -80,6 +80,13 @@ public class HomeController {
 		return new ModelAndView("registrar", "reg", new Cliente());
 	}
 	
+	@RequestMapping(value="/reserva", method = RequestMethod.GET)
+	public ModelAndView reserva() {
+		
+		
+		return new ModelAndView("reserva");
+	}
+	
 	@RequestMapping(value = "/registrarse", method = RequestMethod.POST)
 	public String registrarse(@ModelAttribute Cliente clienteLogin,@RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
 		
