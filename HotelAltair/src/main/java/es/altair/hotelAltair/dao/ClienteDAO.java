@@ -20,4 +20,6 @@ public interface ClienteDAO {
 	
 	void ActualizarCliente(Cliente client);
 	
+	public String encriptarContraseña(String contraseña);
+	
 }

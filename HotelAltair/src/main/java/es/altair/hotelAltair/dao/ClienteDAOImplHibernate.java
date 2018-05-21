@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 
 
 import es.altair.hotelAltair.bean.Cliente;
+import es.altair.hotelAltair.util.SessionProvider;
 
 public class ClienteDAOImplHibernate implements ClienteDAO {
 		String pass = "altair123$%";	
@@ -28,10 +29,15 @@ public class ClienteDAOImplHibernate implements ClienteDAO {
 		
 		Session sesion = sessionFactory.getCurrentSession();
 		
-		client = (Cliente) sesion.createQuery("SELECT cl FROM Cliente cl WHERE correo =:c AND password=AES_ENCRYPT(:p, :passphrase)")
+		/*client = (Cliente) sesion.createQuery("SELECT cl FROM Cliente cl WHERE correo =:c AND password=AES_ENCRYPT(:p, :passphrase)")
 				.setParameter("c", correo)
 				.setParameter("p", password)
 				.setParameter("passphrase", pass)
+				.uniqueResult();*/
+		
+		client = (Cliente) sesion.createQuery("SELECT cl FROM Cliente cl WHERE correo =:c AND password =:p)")
+				.setParameter("c", correo)
+				.setParameter("p", password)
 				.uniqueResult();
 		
 		
@@ -43,6 +49,7 @@ public class ClienteDAOImplHibernate implements ClienteDAO {
 	public void insertar(Cliente client) {
 		Session sesion = sessionFactory.getCurrentSession();
 		sesion.persist(client);
+			
 	}
 
 	@Transactional
@@ -93,6 +100,24 @@ public class ClienteDAOImplHibernate implements ClienteDAO {
 		Session sesion = sessionFactory.getCurrentSession();
 		sesion.update(client);
 
+	}
+	
+	@Override
+	public String encriptarContraseña(String contraseña) {
+		
+		String contraseñaEncriptada;
+		
+		char array[] = contraseña.toCharArray();
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			array[i] = (char)(array[i] + (char)5);
+		}
+		
+		contraseñaEncriptada = String.valueOf(array);
+		System.out.println(contraseñaEncriptada);
+		return contraseñaEncriptada;
+		
 	}
 
 }

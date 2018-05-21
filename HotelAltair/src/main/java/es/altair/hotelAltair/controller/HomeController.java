@@ -41,6 +41,9 @@ public class HomeController {
 	@Autowired
 	private ReservaDAO reservaDAO;
 	
+	
+	
+	
 
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -57,13 +60,15 @@ public class HomeController {
 	public String entrar(@ModelAttribute Cliente clienteLogin, Model model, HttpSession session) {
 		
 		model.addAttribute("listarH", habitacionDAO.listarHabitaciones());
+		clienteLogin.setPassword(clienteDAO.encriptarContraseña(clienteLogin.getPassword()));
 		clienteLogin = clienteDAO.comprobarCliente(clienteLogin.getCorreo(), clienteLogin.getPassword());
 		
 		if(clienteLogin != null) {
 			session.setAttribute("clienteLogin", clienteLogin);
-			return "redirect:/home?mensaje=Sesion Iniciada Con exito";
+			System.out.println("Sesion iniciada con esito");
+			return "redirect:/?mensaje=Sesion Iniciada Con exito";
 		}
-		
+		System.out.println("Sesion no Iniciada");
 		return "redirect:/?mensaje=Error en email o Password Incorrecto";
 		
 	}
@@ -78,9 +83,12 @@ public class HomeController {
 	@RequestMapping(value = "/registrarse", method = RequestMethod.POST)
 	public String registrarse(@ModelAttribute Cliente clienteLogin,@RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
 		
-		System.out.println(clienteLogin);
-		if(clienteDAO.validarEmail(clienteLogin)) 
+		
+		if(clienteDAO.validarEmail(clienteLogin)) {
+			
+			clienteLogin.setPassword(clienteDAO.encriptarContraseña(clienteLogin.getPassword())); 
 			clienteDAO.insertar(clienteLogin);
+		}
 		else {
 			return "redirect:/?mensaje=Usuario YA Registrado";
 		}
