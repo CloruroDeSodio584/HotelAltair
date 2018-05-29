@@ -15,16 +15,11 @@ h5 {
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<!-- BOOTSTRAP CSS -->
-<link rel="stylesheet"
-	href="<c:url value="/resources/css/bootstrap.min.css" />">
-
-<link href="/resources/css/CSS_Propio.css" rel="stylesheet" />
-
-<link rel="stylesheet"
-	href="<c:url value="/resources/css/fonts/OLD/font-awesome.css" />">
-<script defer
-	src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Bootstrap core CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/css/mdb.min.css" rel="stylesheet">
 
 </head>
 

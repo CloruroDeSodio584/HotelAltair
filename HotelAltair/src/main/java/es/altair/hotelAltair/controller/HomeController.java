@@ -99,9 +99,20 @@ public class HomeController {
 		return "reserva";
 	}
 	
-	@RequestMapping(value="/confirmarReserva", method = RequestMethod.GET)
-	public String confirmarReserva(Model model, HttpServletRequest request) {
+	@RequestMapping(value="/confirmarReserva", method = RequestMethod.POST)
+	public String confirmarReserva(Model model, HttpServletRequest request, HttpSession session) {
+
+		Cliente n = (Cliente)session.getAttribute("clienteLogin");
+		int idCliente = n.getIdCliente();
+				
 		
+		//RECOGER PARAMETROS
+		/*String titulo = request.getParameter("titulo");
+		String numJugadores = request.getParameter("numJugadores");
+		String descripcion =  request.getParameter("descripcion");
+		int pegi = Integer.parseInt(request.getParameter("pegi"));
+		
+		int idgenero = Integer.parseInt(request.getParameter("genero"));*/
 		
 		
 		return "redirect:/";

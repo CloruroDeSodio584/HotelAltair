@@ -85,6 +85,8 @@ h5 {
 						
 						
 	<div class="container">
+	
+							
 		<table class="table table-md-6 table-striped table-inverse">
 			<thead>
 				<tr>
@@ -98,23 +100,31 @@ h5 {
 			</thead>
 			<tbody>
 					<tr>
-						<td>${habitacion.tematica}</td>
-						<td><input type="date" id="fechaEntrada" name="fechaEntrada"></td>
-						<td><input type="date" id="fechaSalida" name ="fechaSalida" value="${now}" /></td>
-						<td>${clienteLogin.nombre}</td>
+					
+					<c:url value="/confirmarReserva" var="reserva"/>
+					
+					<f:form class="form-horizontal" commandName="reserva" method="post" action="${reserva}">
+						<td>${habitacion.tematica}<input type="hidden" value="${habitacion.tematica}"/>  </td>
+						<td><input type="date" id="fechaEntrada" name="fechaEntrada" required="required" /></td>
+						<td><input type="date" id="fechaSalida" name ="fechaSalida" required="required" /></td>
+						<td>${habitacion.precio}<input type="hidden" required="required" value="${habitacion.precio}"/></td>
 						
 						<td>
-							<select>
+							<select name="tipoPago">
   								<option value="Efectivo">Efectivo</option>
  					 			<option value="Tarjeta">Tarjeta</option>
   								<option value="Paypal">Paypal</option>
   								<option value="Cheque">Cheque</option>
 							</select>
+								<button type="submit" class="btn btn-success">Reservar</button>
 						</td>
-					</tr>		
+					
+						</f:form>
+					</tr>			
 			</tbody>
 		</table>	
-		<button onclick="location.href='confirmarReserva'" type="button" class="btn btn-success">Reservar</button>
+		
+		
 	</div>
 	
 	
@@ -138,6 +148,7 @@ h5 {
 	<script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
 
 	<script type="text/javascript">
+
 	$('.carousel[data-type="multi"] .item').each(function(){
 		  var next = $(this).next();
 		  if (!next.length) {
@@ -154,6 +165,8 @@ h5 {
 		    next.children(':first-child').clone().appendTo($(this));
 		  }
 		});
+	
+	
 	
 	
 	
