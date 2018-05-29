@@ -245,9 +245,9 @@ h5 {
 		<div class="row" style="padding-left: 40px">
 			<c:forEach items="${listarH}" var="h">
 					
+					<!-- ?idHabitacion=h.getIdHabitacion() -->
 					
-					
-			<c:if test="${h.tematica.equals('s') }">
+			<c:if test="${h.tematica.equals('Star Wars') }">
 			
 			<div class="col-sm-6 col-md-4 col-lg-3 mt-4">
                 <div class="card card-inverse card-info">
@@ -262,14 +262,13 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button onclick="window.location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button value="${h.idHabitacion}" name="idhabitacion" onclick="location.href='reserva?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
                     </div>
                 </div>
             </div>
 	
 			</c:if>
-			
-		<c:if test="${h.tematica.equals('b') }">
+		<c:if test="${h.tematica.equals('Batman') }">
 			<div class="col-sm-6 col-md-4 col-lg-3 mt-4">
                 <div class="card card-inverse card-info">
                     <img class="card-img-top" src="<c:url value="/resources/images/habitacio-batman.jpg" />">
@@ -283,14 +282,14 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button onclick="window.location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button onclick="location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
                     </div>
                 </div>
             </div>
 			
 			</c:if>
 					
-				<c:if test="${h.tematica.equals('p') }">	
+				<c:if test="${h.tematica.equals('Piratas del Caribe') }">	
 			
 					<div class="col-sm-6 col-md-4 col-lg-3 mt-4">
                 <div class="card card-inverse card-info">
@@ -305,7 +304,7 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button onclick="window.location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button onclick="location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
                     </div>
                 </div>
             </div>

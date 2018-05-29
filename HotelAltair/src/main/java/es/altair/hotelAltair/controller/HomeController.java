@@ -4,9 +4,10 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-
+import org.junit.runner.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.altair.hotelAltair.bean.Cliente;
+import es.altair.hotelAltair.bean.Habitacion;
 import es.altair.hotelAltair.dao.ClienteDAO;
 import es.altair.hotelAltair.dao.HabitacionDAO;
 import es.altair.hotelAltair.dao.ReservaDAO;
@@ -81,10 +83,28 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="/reserva", method = RequestMethod.GET)
-	public ModelAndView reserva() {
+	public String reserva(Model model, HttpServletRequest request, HttpSession session) {
+		
+		if(noLogueado(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/";
+		}
+		
+		 int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
+		 Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorId(idHabitacion);
+		 
+		 model.addAttribute("habitacion", habitacionReservar);
+		 model.addAttribute("clienteLogin", (Cliente)session.getAttribute("clienteLogin"));
+		
+		return "reserva";
+	}
+	
+	@RequestMapping(value="/confirmarReserva", method = RequestMethod.GET)
+	public String confirmarReserva(Model model, HttpServletRequest request) {
 		
 		
-		return new ModelAndView("reserva");
+		
+		return "redirect:/";
 	}
 	
 	@RequestMapping(value = "/registrarse", method = RequestMethod.POST)
@@ -102,6 +122,14 @@ public class HomeController {
 		
 		return "redirect:/?mensaje=Usuario Registrado";
 		
+	}
+	
+	private boolean noLogueado(HttpSession session) {
+		Cliente clienteLogueado = (Cliente) session.getAttribute("clienteLogin");
+		if (clienteLogueado == null || session.isNew()) {
+			return true;
+		}
+		return false;
 	}
 	
 	

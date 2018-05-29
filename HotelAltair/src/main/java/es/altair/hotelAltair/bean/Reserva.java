@@ -14,40 +14,43 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="reserva")
+@Table(name = "reserva")
 public class Reserva implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idReserva;
-	
-	@ManyToOne(cascade=CascadeType.MERGE)
-	@JoinColumn(name="idCliente")
+
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "idCliente")
 	private Cliente cliente;
-	
-	@ManyToOne(cascade=CascadeType.MERGE)
-	@JoinColumn(name="idTrabajador")
+
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "idTrabajador")
 	private Trabajador trabajador;
-	
-	@ManyToOne(cascade=CascadeType.MERGE)
-	@JoinColumn(name="idHabitacion")
+
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "idHabitacion")
 	private Habitacion habitacion;
-	
+
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	
+
 	String fechaEntrada;
-	
+
 	String fechaSalida;
-	
+
 	double precioActual;
 	double precioAPagar;
-	
+
+	String tipoPago;
+
 	public Reserva() {
-		
+
 	}
-	
-	public Reserva(Cliente cliente, Trabajador trabajador, Habitacion habitacion, Date fechaEntrada, Date fechaSalida, double precioActual, double precioAPagar) {
-	
+
+	public Reserva(Cliente cliente, Trabajador trabajador, Habitacion habitacion, Date fechaEntrada, Date fechaSalida,
+			double precioActual, double precioAPagar, String tipoPago) {
+
 		this.cliente = cliente;
 		this.trabajador = trabajador;
 		this.habitacion = habitacion;
@@ -55,7 +58,8 @@ public class Reserva implements Serializable {
 		this.fechaSalida = sdf.format(fechaSalida);
 		this.precioActual = precioActual;
 		this.precioAPagar = precioAPagar;
-		
+		this.tipoPago = tipoPago;
+
 	}
 
 	public int getIdReserva() {
@@ -130,14 +134,19 @@ public class Reserva implements Serializable {
 		this.precioAPagar = precioAPagar;
 	}
 
+	public String getTipoPago() {
+		return tipoPago;
+	}
+	
+	public void setTipoPago(String tipoPago) {
+		this.tipoPago = tipoPago;
+	}
+	
 	@Override
 	public String toString() {
 		return "Reserva [idReserva=" + idReserva + ", cliente=" + cliente + ", trabajador=" + trabajador
 				+ ", habitacion=" + habitacion + ", sdf=" + sdf + ", fechaEntrada=" + fechaEntrada + ", fechaSalida="
 				+ fechaSalida + ", precioActual=" + precioActual + ", precioAPagar=" + precioAPagar + "]";
 	}
-	
-	
-	
-	
+
 }
