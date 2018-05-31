@@ -15,11 +15,16 @@ h5 {
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<!-- Bootstrap core CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-<!-- Material Design Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/css/mdb.min.css" rel="stylesheet">
+<!-- BOOTSTRAP CSS -->
+<link rel="stylesheet"
+	href="<c:url value="/resources/css/bootstrap.min.css" />">
+
+<link href="/resources/css/CSS_Propio.css" rel="stylesheet" />
+
+<link rel="stylesheet"
+	href="<c:url value="/resources/css/fonts/OLD/font-awesome.css" />">
+<script defer
+	src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 
 </head>
 
@@ -43,11 +48,29 @@ h5 {
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active"><a class="nav-link"
 					href="">Inicio</a></li>
+					
+					<c:if test="${clienteLogin != null}">
+					<li class="nav-item active"><a class="nav-link"
+					href="misReservas">Mis reservas</a></li>
+					
+					
+					<li class="nav-item active"><a style="color: silver;" class="nav-link"
+					href="modPerfil">Modificar Perfil</a></li>
+					</c:if>
+					
 			</ul>
 			
+			
+			<c:if test="${clienteLogin == null}"> 
 			<a href="registrar" role="button"
 			class="btn btn-link btn-sm derecha">registrar</a> 
+			</c:if>
+			<c:if test="${clienteLogin != null}">
+					<a href="cerrarSesion" role="button"
+			class="btn btn-link btn-sm derecha">cerrar Sesion</a>  </c:if>
 			<!-- Formulario Entrar -->
+			
+			<c:if test="${clienteLogin == null}"> 
 			
 			<f:form action="entrar" class="form-inline" commandName="cli" method="POST">
 				<div class="form-group">
@@ -74,7 +97,7 @@ h5 {
 						value="Entrar">
 				</div>
 			</f:form>
-			
+			</c:if>
 		</div>
 
 	</nav>
@@ -277,7 +300,7 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button onclick="location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button value="${h.idHabitacion}"  onclick="location.href='reserva?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
                     </div>
                 </div>
             </div>
@@ -299,7 +322,7 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button onclick="location.href='reserva'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button value="${h.idHabitacion}"  onclick="location.href='reserva?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
                     </div>
                 </div>
             </div>

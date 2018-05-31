@@ -47,11 +47,9 @@ h5 {
 		<div class="collapse navbar-collapse" id="navbarExample">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active"><a class="nav-link"
-					href="">Inicio</a></li>
+					href="homet">Inicio</a></li>
 			</ul>
 			
-			<a href="registrar" role="button"
-			class="btn btn-link btn-sm derecha">registrar</a> 
 			<!-- Formulario Entrar -->
 			
 		
@@ -104,10 +102,10 @@ h5 {
 					<c:url value="/confirmarReserva" var="reserva"/>
 					
 					<f:form class="form-horizontal" commandName="reserva" method="post" action="${reserva}">
-						<td>${habitacion.tematica}<input type="hidden" value="${habitacion.tematica}"/>  </td>
+						<td>${habitacion.tematica}<input name="idHabitacion" type="hidden" value="${habitacion.idHabitacion}"/>  </td>
 						<td><input type="date" id="fechaEntrada" name="fechaEntrada" required="required" /></td>
 						<td><input type="date" id="fechaSalida" name ="fechaSalida" required="required" /></td>
-						<td>${habitacion.precio}<input type="hidden" required="required" value="${habitacion.precio}"/></td>
+						<td>${habitacion.precio}<input name="precioApagar" type="hidden" required="required" value="${habitacion.precio}"/></td>
 						
 						<td>
 							<select name="tipoPago">

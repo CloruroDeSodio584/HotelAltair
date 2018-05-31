@@ -33,8 +33,6 @@ public class Reserva implements Serializable {
 	@JoinColumn(name = "idHabitacion")
 	private Habitacion habitacion;
 
-	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
 	String fechaEntrada;
 
 	String fechaSalida;
@@ -48,19 +46,20 @@ public class Reserva implements Serializable {
 
 	}
 
-	public Reserva(Cliente cliente, Trabajador trabajador, Habitacion habitacion, Date fechaEntrada, Date fechaSalida,
+	public Reserva(Cliente cliente, Trabajador trabajador, Habitacion habitacion, String fechaEntrada, String fechaSalida,
 			double precioActual, double precioAPagar, String tipoPago) {
 
 		this.cliente = cliente;
 		this.trabajador = trabajador;
 		this.habitacion = habitacion;
-		this.fechaEntrada = sdf.format(fechaEntrada);
-		this.fechaSalida = sdf.format(fechaSalida);
+		this.fechaEntrada = fechaEntrada;
+		this.fechaSalida = fechaSalida;
 		this.precioActual = precioActual;
 		this.precioAPagar = precioAPagar;
 		this.tipoPago = tipoPago;
 
 	}
+	
 
 	public int getIdReserva() {
 		return idReserva;
@@ -94,13 +93,7 @@ public class Reserva implements Serializable {
 		this.habitacion = habitacion;
 	}
 
-	public SimpleDateFormat getSdf() {
-		return sdf;
-	}
 
-	public void setSdf(SimpleDateFormat sdf) {
-		this.sdf = sdf;
-	}
 
 	public String getFechaEntrada() {
 		return fechaEntrada;
@@ -145,7 +138,7 @@ public class Reserva implements Serializable {
 	@Override
 	public String toString() {
 		return "Reserva [idReserva=" + idReserva + ", cliente=" + cliente + ", trabajador=" + trabajador
-				+ ", habitacion=" + habitacion + ", sdf=" + sdf + ", fechaEntrada=" + fechaEntrada + ", fechaSalida="
+				+ ", habitacion=" + habitacion + ", sdf=" + ", fechaEntrada=" + fechaEntrada + ", fechaSalida="
 				+ fechaSalida + ", precioActual=" + precioActual + ", precioAPagar=" + precioAPagar + "]";
 	}
 
