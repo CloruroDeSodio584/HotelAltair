@@ -28,7 +28,7 @@ h5 {
 
 </head>
 
-<body>
+<body >
 	
 	<!-- Inicio -->
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
@@ -81,11 +81,11 @@ h5 {
 					
 <!-- Fin Mensaje Error/Exito <span class="badge badge-danger">Peña}</span> -->
 						
-						
-	<div class="container">
+	<div style="background-repeat: no-repeat;background-image: url('http://demos.creative-tim.com/material-bootstrap-wizard/assets/img/wizard-book.jpg'); background-attachment: fixed;">
+	<div class="container" style="padding-top: 50px; padding-bottom: 350px">
 	
 							
-		<table class="table table-md-6 table-striped table-inverse">
+		<table class="table table-md-6 table-striped table-inverse" >
 			<thead>
 				<tr>
 					<th class="">Temática habitacion</th>
@@ -125,7 +125,15 @@ h5 {
 		
 	</div>
 	
+	</div>	
 	
+	<footer style="background-color: #1C1C1C" class="page-footer font-small blue pt-4 mt-4">
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3" style="color: yellow;">© 2018 Copyright:
+    <a href="" > hotelAltair Company</a>
+  </div>
+
+</footer>
 	
 	
 	

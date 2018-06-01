@@ -19,6 +19,9 @@ h5 {
 <link rel="stylesheet"
 	href="<c:url value="/resources/css/bootstrap.min.css" />">
 
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+
 <link href="/resources/css/CSS_Propio.css" rel="stylesheet" />
 
 <link rel="stylesheet"
@@ -28,8 +31,9 @@ h5 {
 
 </head>
 
-<body>
-	
+<body class="image-container set-full-height">
+
+<div style="background-repeat: no-repeat;background-image: url('http://demos.creative-tim.com/material-bootstrap-wizard/assets/img/wizard-book.jpg'); background-attachment: fixed;">
 	<!-- Inicio -->
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
 		<figure class="figure mt-0 mb-0">
@@ -128,7 +132,7 @@ h5 {
 						
 <!-- inicio carousel -->
 						
-				<div class="mt-5" data-toggle="collapse">
+<div class="mt-5" data-toggle="collapse">
 
 		<div id="carouselExampleIndicators" class="carousel slide"
 			data-ride="carousel">
@@ -258,7 +262,7 @@ h5 {
 
 
 <!-- Tabla De Habitaciones -->
-	<div class="container">
+	<div class="container" >
 		<c:if test="${!empty listarH}"> 
 		<div class="row" style="padding-left: 40px">
 			<c:forEach items="${listarH}" var="h">
@@ -329,16 +333,27 @@ h5 {
 					
 				</c:if>
 			
-			
-				
 				</c:forEach> 
 	</div>
-	
 		</c:if> 
+	
 	</div>
+	
+	<!-- Footer -->
+	
+	<footer style="background-color: #1C1C1C" class="page-footer font-small blue pt-4 mt-4">
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3" style="color: yellow;">© 2018 Copyright:
+    <a href="" > hotelAltair Company</a>
+  </div>
+
+</footer>
+
+	
 
 
-	<!-- FIN Tabla De Juegos -->
+
+                
 	
 	
 	
@@ -382,6 +397,6 @@ h5 {
 		  }
 		});
 	</script>
-	
+	</div>
 </body>
 </html>

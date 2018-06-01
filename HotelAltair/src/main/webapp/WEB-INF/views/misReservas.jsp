@@ -30,6 +30,8 @@ h5 {
 
 <body>
 
+<div style="background-repeat: no-repeat;background-image: url('http://demos.creative-tim.com/material-bootstrap-wizard/assets/img/wizard-book.jpg'); background-attachment: fixed;">
+
 	<!-- Inicio -->
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
 		<figure class="figure mt-0 mb-0">
@@ -203,6 +205,16 @@ h5 {
 			</table>
 		</c:if>
 	</div>
+	
+		<!-- Footer -->
+	
+	<footer style="background-color: #1C1C1C" class="page-footer font-small blue pt-4 mt-4">
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3" style="color: yellow;">© 2018 Copyright:
+    <a href="" > hotelAltair Company</a>
+  </div>
+
+</footer>
 
 
 	<!-- Fin tabla de Habitaciones -->
@@ -246,6 +258,8 @@ h5 {
 			}
 		});
 	</script>
+	
+	</div>
 
 </body>
 </html>

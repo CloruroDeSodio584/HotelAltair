@@ -27,10 +27,31 @@ h5 {
 	src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 
 </head>
-<body background="../images/top.jpg">
+<body style="background-repeat: no-repeat;background-image: url('http://www.slowtourismciociaria.com/wp-content/uploads/2015/09/slide1.jpg'); background-attachment: fixed;" >
+<div> 
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+		<figure class="figure mt-0 mb-0">
+			<a class="navbar-brand" href=""><img
+				src="<c:url value="/resources/images/hotel.png" />" class="figure-img img-fluid rounded"
+				alt="Logo" style="height: 40px;"></a>
+		</figure>
+
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarExample" arial-controls="navbarExample"
+			arial-expanded="false" arial-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarExample">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active"><a class="nav-link"
+					href="homet">Inicio</a></li>
+			</ul>	
+		</div>
+	</nav>
+
 	<div class="container">
-	
-	
 		<div class="row main">
 			<div class="panel-heading">
 				<div class="panel-title text-center">
@@ -124,5 +145,7 @@ h5 {
 	<script src="../js/jquery-3.2.1.slim.min.js"></script>
 	<script src="../js/popper.min.js"></script>
 	<script src="../js/bootstrap.min.js"></script>
+	
+	</div>
 </body>
 </html>
