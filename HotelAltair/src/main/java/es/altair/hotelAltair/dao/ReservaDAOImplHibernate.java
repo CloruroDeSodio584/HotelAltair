@@ -33,6 +33,16 @@ private SessionFactory sessionFactory;
 		Session sesion = sessionFactory.getCurrentSession();
 		return (List<Reserva>) sesion.createQuery("From Reserva").list();
 	}
+	
+	@Transactional
+	@Override
+	public List<Reserva> listarReservaPorTipoHabitacion(int tipoHabitacion) {
+		Session sesion = sessionFactory.getCurrentSession();
+		return (List<Reserva>) sesion.createQuery("From Reserva WHERE tipoHabitacion=:t")
+				.setParameter("t", tipoHabitacion)
+				.list();
+	}
+	
 
 	@Transactional
 	@Override

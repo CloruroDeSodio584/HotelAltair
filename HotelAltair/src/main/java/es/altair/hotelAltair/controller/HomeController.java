@@ -101,7 +101,7 @@ public class HomeController {
 		
 		if(noLogueado(session)) {
 			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/";
+			return "redirect:/?mensaje=Debe iniciar Sesion para continuar";
 		}
 		
 		Cliente n = (Cliente)session.getAttribute("clienteLogin");	
@@ -121,12 +121,18 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="/modPerfil", method = RequestMethod.GET)
-	public ModelAndView modPerfil(Model model, HttpServletRequest request ,HttpSession session) {
+	public String modPerfil(Model model, HttpServletRequest request ,HttpSession session) {
+		
+		if(noLogueado(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
 		
 		model.addAttribute("clienteLogin", (Cliente)session.getAttribute("clienteLogin"));
 		
 		
-		return new ModelAndView("modPerfil");
+		return "modPerfil";
 	}
 	
 	
@@ -135,7 +141,7 @@ public class HomeController {
 		
 		if(noLogueado(session)) {
 			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/";
+			return "redirect:/?mensaje=Debe iniciar Sesion para continuar";
 		}
 		
 		 int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
@@ -310,20 +316,9 @@ public class HomeController {
 		boolean fechaCorrecta = true; 
 		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd");
 		
-		Date fechaEntradaDate = null;
-		Date fechaSalidaDate = null;
+		Date fechaEntradaDate = convertirStringaDate(fechaEntrada);
+		Date fechaSalidaDate = convertirStringaDate(fechaSalida);
 		
-		try {	
-		fechaEntradaDate = formatoDelTexto.parse(fechaEntrada);
-		
-		fechaSalidaDate = formatoDelTexto.parse(fechaSalida);
-		
-		System.out.println("FECHA ENTRADA: " +fechaEntradaDate);
-		System.out.println("FECHA SALIDA: " +fechaSalidaDate);
-		} 
-		catch (ParseException ex) {
-				ex.printStackTrace();
-		}
 		
 		if(fechaSalidaDate.before(fechaEntradaDate))
 			fechaCorrecta = false;
@@ -334,26 +329,40 @@ public class HomeController {
 		
 	}
 	
-	private double precioFecha(String fechaEntrada,String fechaSalida, int tipoHabitacion) {
+	
+	private boolean comrpuebaHabitacionLibre(String fechaEntrada, String fechaSalida, int tipoHabitacion , int numHabitaciones) {
+		boolean estaLibre = true;
+	
+		Date fechaEntradaDate = convertirStringaDate(fechaEntrada);
+		Date fechaSalidaDate = convertirStringaDate(fechaSalida);
 		
-		boolean fechaCorrecta = true; //"yyyy-MM-dd"
-		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd");
+		List<Reserva> reservasPorTipo = reservaDAO.listarReservaPorTipoHabitacion(tipoHabitacion);
 		
-		Date fechaEntradaDate = null;
-		Date fechaSalidaDate = null;
+		float dias = diasEntreDosFechas(fechaEntradaDate, fechaSalidaDate);
 		
-		try {	
-		fechaEntradaDate = formatoDelTexto.parse(fechaEntrada);
-		fechaSalidaDate = formatoDelTexto.parse(fechaSalida);
-		} 
-		catch (ParseException ex) {
-				ex.printStackTrace();
+		List<Date> fechas = new ArrayList<Date>();
+		
+		while(!fechaEntradaDate.after(fechaSalidaDate)) {
+			fechas.add(fechaEntradaDate);
+			fechaEntradaDate = fechaEntradaDate.
 		}
 		
-		long diferencia = fechaEntradaDate.getTime() - fechaSalidaDate.getTime();
-		float dias = (diferencia / (1000*60*60*24)) * -1;
 		
-		System.out.println(dias);
+		return estaLibre;
+	}	
+	
+	
+	private double precioFecha(String fechaEntrada,String fechaSalida, int tipoHabitacion) {
+		
+		boolean fechaCorrecta = true;
+		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Date fechaEntradaDate = convertirStringaDate(fechaEntrada);
+		Date fechaSalidaDate = convertirStringaDate(fechaSalida);
+	
+		float dias = diasEntreDosFechas(fechaEntradaDate, fechaSalidaDate);
+		
+	
 		
 		int mes = fechaEntradaDate.getMonth();
 		
@@ -390,13 +399,31 @@ public class HomeController {
 		
 		
 		return 0;
-		
-		
-		
-			
-		
-		
 	}
+	
+	private float diasEntreDosFechas(Date fechaEntradaDate, Date fechaSalidaDate) {
+		
+		long diferencia = fechaEntradaDate.getTime() - fechaSalidaDate.getTime();
+		float dias = (diferencia / (1000*60*60*24)) * -1;
+		
+		return dias;
+	}
+	
+	private Date convertirStringaDate(String fecha) {
+		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd");	
+		Date fecha1 = null;
+		
+		try {
+			fecha1 = formatoDelTexto.parse(fecha);
+		}
+		catch (ParseException ex) {
+			ex.printStackTrace();
+		}
+		
+		return fecha1;
+	}
+	
+	
 	
 	
 }
