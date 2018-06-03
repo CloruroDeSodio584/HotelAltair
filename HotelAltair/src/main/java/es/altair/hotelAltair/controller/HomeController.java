@@ -1,8 +1,17 @@
 package es.altair.hotelAltair.controller;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.Convert;
 import javax.servlet.http.HttpServletRequest;
@@ -147,13 +156,19 @@ public class HomeController {
 		Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorId(idHabitacion);
 		String fechaEntrada = request.getParameter("fechaEntrada");
 		String fechaSalida =  request.getParameter("fechaSalida");
-		double precioActual = Double.parseDouble((request.getParameter("precioApagar")));
-
-		double precioApagar = precioActual;
 		
 		String tipoPago =request.getParameter("tipoPago");
 		
-		Reserva nuevaReserva = new Reserva(n, null ,habitacionReservar, fechaEntrada, fechaSalida, precioActual, precioApagar, tipoPago);
+		boolean fechaCorrecta = compruebaFechas(fechaEntrada, fechaSalida);
+		
+		if(!fechaCorrecta)
+		return "redirect:/?mensaje=Fecha de Salida Incorrecta vuelva a intentarlo";
+		
+		double precioApagar = precioFecha(fechaEntrada, fechaSalida ,habitacionReservar.getTipoHabitacion());
+		
+		
+		
+		Reserva nuevaReserva = new Reserva(n, null ,habitacionReservar, fechaEntrada, fechaSalida, precioApagar, tipoPago);
 		
 		reservaDAO.insertarReserva(nuevaReserva);
 		
@@ -230,6 +245,158 @@ public class HomeController {
 		return false;
 	}
 	
+	
+	private List<Habitacion> listaHabitacionesSoloUno(){
+		List<Habitacion> todasHabitaciones = habitacionDAO.listarHabitaciones();
+	
+		List<Habitacion> habitacionSoloUnoPorTipo = new ArrayList<Habitacion>();
+		boolean esPirata1 = false, esStarWar1 = false, esBatman1 = false, esPirata2 = false, esStarWar2 = false, esBatman2 = false, esPirata3 = false, esStarWar3 = false, esBatman3 = false;
+		
+		for (Habitacion habitacion : todasHabitaciones) {
+			
+			if(habitacion.getTipoHabitacion() == 1 && habitacion.getTematica() == "Star Wars" && !esStarWar1) {
+				habitacionSoloUnoPorTipo.add(habitacion);
+					esStarWar1 = true;
+			} else
+			
+				if(habitacion.getTipoHabitacion() == 1 && habitacion.getTematica() == "Piratas del Caribe" && !esPirata1) {
+					habitacionSoloUnoPorTipo.add(habitacion);
+						esPirata1 = true;
+				} else
+					if(habitacion.getTipoHabitacion() == 1 && habitacion.getTematica() == "Batman" && !esBatman1) {
+						habitacionSoloUnoPorTipo.add(habitacion);
+							esBatman1 = true;
+					}
+					else 
+						if(habitacion.getTipoHabitacion() == 2 && habitacion.getTematica() == "Star Wars" && !esStarWar2) {
+							habitacionSoloUnoPorTipo.add(habitacion);
+								esStarWar2 = true;
+						} else
+						
+							if(habitacion.getTipoHabitacion() == 2 && habitacion.getTematica() == "Piratas del Caribe" && !esPirata2) {
+								habitacionSoloUnoPorTipo.add(habitacion);
+									esPirata2 = true;
+							} else
+								if(habitacion.getTipoHabitacion() == 2 && habitacion.getTematica() == "Batman" && !esBatman2) {
+									habitacionSoloUnoPorTipo.add(habitacion);
+										esBatman2 = true;
+								} else 
+									// hola
+									if(habitacion.getTipoHabitacion() == 3 && habitacion.getTematica() == "Star Wars" && !esStarWar3) {
+										habitacionSoloUnoPorTipo.add(habitacion);
+											esStarWar3 = true;
+									} else
+									
+										if(habitacion.getTipoHabitacion() == 3 && habitacion.getTematica() == "Piratas del Caribe" && !esPirata3) {
+											habitacionSoloUnoPorTipo.add(habitacion);
+												esPirata3 = true;
+										} else
+											if(habitacion.getTipoHabitacion() == 3 && habitacion.getTematica() == "Batman" && !esBatman3) {
+												habitacionSoloUnoPorTipo.add(habitacion);
+													esBatman3 = true;
+											}
+			
+			
+			
+			
+		}
+		
+		return habitacionSoloUnoPorTipo;
+		
+	}
+	
+	private boolean compruebaFechas(String fechaEntrada, String fechaSalida) {
+		 
+		boolean fechaCorrecta = true; 
+		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Date fechaEntradaDate = null;
+		Date fechaSalidaDate = null;
+		
+		try {	
+		fechaEntradaDate = formatoDelTexto.parse(fechaEntrada);
+		
+		fechaSalidaDate = formatoDelTexto.parse(fechaSalida);
+		
+		System.out.println("FECHA ENTRADA: " +fechaEntradaDate);
+		System.out.println("FECHA SALIDA: " +fechaSalidaDate);
+		} 
+		catch (ParseException ex) {
+				ex.printStackTrace();
+		}
+		
+		if(fechaSalidaDate.before(fechaEntradaDate))
+			fechaCorrecta = false;
+		
+		
+		return fechaCorrecta;
+		
+		
+	}
+	
+	private double precioFecha(String fechaEntrada,String fechaSalida, int tipoHabitacion) {
+		
+		boolean fechaCorrecta = true; //"yyyy-MM-dd"
+		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Date fechaEntradaDate = null;
+		Date fechaSalidaDate = null;
+		
+		try {	
+		fechaEntradaDate = formatoDelTexto.parse(fechaEntrada);
+		fechaSalidaDate = formatoDelTexto.parse(fechaSalida);
+		} 
+		catch (ParseException ex) {
+				ex.printStackTrace();
+		}
+		
+		long diferencia = fechaEntradaDate.getTime() - fechaSalidaDate.getTime();
+		float dias = (diferencia / (1000*60*60*24)) * -1;
+		
+		System.out.println(dias);
+		
+		int mes = fechaEntradaDate.getMonth();
+		
+		if(mes == 1 | mes == 2) {
+			if(tipoHabitacion ==1)
+				return 100 * dias;	
+			else if (tipoHabitacion == 2)
+				return 130 * dias;
+			else if (tipoHabitacion == 3)
+				return 320 * dias;
+		}
+		else if(mes == 3 | mes == 4) {
+			if(tipoHabitacion ==1)
+				return 220 * dias;	
+			else if (tipoHabitacion == 2)
+				return 250 * dias;
+			else if (tipoHabitacion == 3)
+				return 400 * dias;
+		} 
+		else if(mes == 5 | mes == 6) {
+			if(tipoHabitacion ==1)
+				return 170 * dias;	
+			else if (tipoHabitacion == 2)
+				return 200 * dias;
+			else if (tipoHabitacion == 3)
+				return 370 * dias;
+		}
+		else if(tipoHabitacion ==1)
+			return 120 * dias;	
+		else if (tipoHabitacion == 2)
+			return 150 * dias;
+		else if (tipoHabitacion == 3)
+			return 340 * dias;
+		
+		
+		return 0;
+		
+		
+		
+			
+		
+		
+	}
 	
 	
 }

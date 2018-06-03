@@ -21,7 +21,7 @@ public class Habitacion implements Serializable {
 	private int idHabitacion;
 	private int tipoHabitacion;
 	private String tematica;
-	private double precio;
+	private int numeroHab;
 	
 	@OneToMany(mappedBy="habitacion", cascade=CascadeType.ALL)
 	public Set<Reserva> reservas = new HashSet<Reserva>();
@@ -30,10 +30,11 @@ public class Habitacion implements Serializable {
 		
 	}
 	
-	public Habitacion(int tipoHabitacion, String tematica, double precio) {
+	public Habitacion(int tipoHabitacion, String tematica, int numeroHab) {
 		this.tipoHabitacion= tipoHabitacion;
 		this.tematica= tematica;
-		this.precio= precio;
+		this.numeroHab=numeroHab;
+		
 	}
 
 	public int getIdHabitacion() {
@@ -60,12 +61,12 @@ public class Habitacion implements Serializable {
 		this.tematica = tematica;
 	}
 
-	public double getPrecio() {
-		return precio;
+	public int getNumeroHab() {
+		return numeroHab;
 	}
-
-	public void setPrecio(double precio) {
-		this.precio = precio;
+	
+	public void setNumeroHab(int numeroHab) {
+		this.numeroHab = numeroHab;
 	}
 
 	public Set<Reserva> getReservas() {
@@ -79,7 +80,7 @@ public class Habitacion implements Serializable {
 	@Override
 	public String toString() {
 		return "Habitacion [idHabitacion=" + idHabitacion + ", tipoHabitacion=" + tipoHabitacion + ", tematica="
-				+ tematica + ", precio=" + precio + "]";
+				+ tematica + ", precio=" + "]";
 	}
 	
 	

@@ -254,7 +254,7 @@ h5 {
 				<c:forEach items="${listarH}" var="h">
 					<tr>
 						<td>${h.tematica }</td>
-						<td>${h.precio }</td>		
+							
 					</tr>
 				</c:forEach> 
 			</tbody>
@@ -267,30 +267,9 @@ h5 {
 		<div class="row" style="padding-left: 40px">
 			<c:forEach items="${listarH}" var="h">
 					
-					<!-- ?idHabitacion=h.getIdHabitacion() -->
 					
-			<c:if test="${h.tematica.equals('Star Wars') }">
 			
-			<div class="col-sm-6 col-md-4 col-lg-3 mt-4">
-                <div class="card card-inverse card-info">
-                    <img class="card-img-top" src="<c:url value="/resources/images/habitaciones-star-wars.jpg" />">
-                    <div class="card-block">
-                        <figure class="profile profile-inline">
-                          
-                        </figure>
-                        <h4 class="card-title">Habitacion temática star wars</h4>
-                        <div class="card-text">
-                            Sientete como un auténtico Jedi con nuestra habitacion dedicada al universo Star Wars
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button value="${h.idHabitacion}" name="idhabitacion" onclick="location.href='reserva?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
-                    </div>
-                </div>
-            </div>
-	
-			</c:if>
-		<c:if test="${h.tematica.equals('Batman') }">
+		<c:if test="${h.tematica.equals('Habitacion Batman')}">
 			<div class="col-sm-6 col-md-4 col-lg-3 mt-4">
                 <div class="card card-inverse card-info">
                     <img class="card-img-top" src="<c:url value="/resources/images/habitacio-batman.jpg" />">
@@ -300,18 +279,21 @@ h5 {
                         </figure>
                         <h4 class="card-title">Habitacion temática Batman</h4>
                         <div class="card-text">
-                           Cae la noche y que mejor manera de descansar con la habitacion dedicada al Caballero Oscuro
+                           Cada una de ellas está equipada con aire acondicionado, televisión, antena parabólica, minibar, caja fuerte individual, conexión a Internet, hilo musical, etc...
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button value="${h.idHabitacion}"  onclick="location.href='reserva?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button value="${h.idHabitacion}"  onclick="location.href='reserva?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar</button>
                     </div>
                 </div>
             </div>
 			
 			</c:if>
 					
-				<c:if test="${h.tematica.equals('Piratas del Caribe') }">	
+				
+				
+					
+				<c:if test="${h.tematica.equals('Superior Piratas del Caribe')}">	
 			
 					<div class="col-sm-6 col-md-4 col-lg-3 mt-4">
                 <div class="card card-inverse card-info">
@@ -320,18 +302,41 @@ h5 {
                         <figure class="profile profile-inline">
                           
                         </figure>
-                        <h4 class="card-title">Habitacion temática Piratas del Caribe</h4>
+                        <h4 class="card-title">Habitacion Superior Piratas del Caribe</h4>
                         <div class="card-text">
-                           Que mejor manera de sentirse un pirata Con la habitacion dedicada al Pirata mas Buscado                 
+                           Las habitaciones superiores que son muy amplias cuentan además con un saloncito y con baño con bañera hidromasaje, calentador de toallas, etc..                 
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button value="${h.idHabitacion}"  onclick="location.href='reserva?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar por ${h.precio } $</button>
+                        <button value="${h.idHabitacion}"  onclick="location.href='reserva?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar</button>
                     </div>
                 </div>
             </div>
 					
 				</c:if>
+			
+			
+				<c:if test="${h.tematica.equals('Suite Star Wars')}">
+			
+			<div class="col-sm-6 col-md-4 col-lg-3 mt-4">
+                <div class="card card-inverse card-info">
+                    <img class="card-img-top" src="<c:url value="/resources/images/habitaciones-star-wars.jpg" />">
+                    <div class="card-block">
+                        <figure class="profile profile-inline">
+                          
+                        </figure>
+                        <h4 class="card-title">Suite star wars</h4>
+                        <div class="card-text">
+ Las Suites Cuentan con una mayor inmersión en la temática ademas de incluir con espectáculos relacionados                                  </div>
+                    </div>
+                    <div class="card-footer">
+                        <button value="${h.idHabitacion}" name="idhabitacion" onclick="location.href='reserva?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar</button>
+                    </div>
+                </div>
+            </div>
+	
+			</c:if>				
+				
 			
 				</c:forEach> 
 	</div>

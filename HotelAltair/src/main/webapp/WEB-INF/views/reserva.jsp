@@ -91,7 +91,7 @@ h5 {
 					<th class="">Temática habitacion</th>
 					<th class="">Fecha Entrada</th>
 					<th class="">Fecha Salida</th>
-					<th class="">Precio </th>
+					
 					<th class="">Tipo Pago</th>
 
 				</tr>
@@ -105,7 +105,6 @@ h5 {
 						<td>${habitacion.tematica}<input name="idHabitacion" type="hidden" value="${habitacion.idHabitacion}"/>  </td>
 						<td><input type="date" id="fechaEntrada" name="fechaEntrada" required="required" /></td>
 						<td><input type="date" id="fechaSalida" name ="fechaSalida" required="required" /></td>
-						<td>${habitacion.precio}<input name="precioApagar" type="hidden" required="required" value="${habitacion.precio}"/></td>
 						
 						<td>
 							<select name="tipoPago">
@@ -121,6 +120,8 @@ h5 {
 					</tr>			
 			</tbody>
 		</table>	
+		
+		<img class="d-block w-100" src="<c:url value="/resources/images/tarifas.png" />" >
 		
 		
 	</div>

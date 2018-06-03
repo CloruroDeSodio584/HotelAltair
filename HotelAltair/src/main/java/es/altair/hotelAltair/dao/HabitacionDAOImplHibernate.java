@@ -22,6 +22,8 @@ private SessionFactory sessionFactory;
 		Session sesion = sessionFactory.getCurrentSession();
 		return (List<Habitacion>) sesion.createQuery("From Habitacion").list();
 	}
+	
+	
 
 	@Transactional
 	@Override

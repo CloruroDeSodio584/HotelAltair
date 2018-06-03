@@ -37,7 +37,7 @@ public class Reserva implements Serializable {
 
 	String fechaSalida;
 
-	double precioActual;
+	
 	double precioAPagar;
 
 	String tipoPago;
@@ -47,14 +47,14 @@ public class Reserva implements Serializable {
 	}
 
 	public Reserva(Cliente cliente, Trabajador trabajador, Habitacion habitacion, String fechaEntrada, String fechaSalida,
-			double precioActual, double precioAPagar, String tipoPago) {
+			 double precioAPagar, String tipoPago) {
 
 		this.cliente = cliente;
 		this.trabajador = trabajador;
 		this.habitacion = habitacion;
 		this.fechaEntrada = fechaEntrada;
 		this.fechaSalida = fechaSalida;
-		this.precioActual = precioActual;
+		
 		this.precioAPagar = precioAPagar;
 		this.tipoPago = tipoPago;
 
@@ -111,14 +111,6 @@ public class Reserva implements Serializable {
 		this.fechaSalida = fechaSalida;
 	}
 
-	public double getPrecioActual() {
-		return precioActual;
-	}
-
-	public void setPrecioActual(double precioActual) {
-		this.precioActual = precioActual;
-	}
-
 	public double getPrecioAPagar() {
 		return precioAPagar;
 	}
@@ -139,7 +131,7 @@ public class Reserva implements Serializable {
 	public String toString() {
 		return "Reserva [idReserva=" + idReserva + ", cliente=" + cliente + ", trabajador=" + trabajador
 				+ ", habitacion=" + habitacion + ", sdf=" + ", fechaEntrada=" + fechaEntrada + ", fechaSalida="
-				+ fechaSalida + ", precioActual=" + precioActual + ", precioAPagar=" + precioAPagar + "]";
+				+ fechaSalida + ", precioActual="  + ", precioAPagar=" + precioAPagar + "]";
 	}
 
 }

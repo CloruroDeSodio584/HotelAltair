@@ -153,6 +153,7 @@ h5 {
 						<th class="">Tematica Habitacion</th>
 						<th class="">Fecha Entrada</th>
 						<th class="">Fecha Salida</th>
+						<th class="">Precio</th>
 						<th class="">Tipo Pago</th>
 
 					</tr>
@@ -164,6 +165,7 @@ h5 {
 							<td>${r.getHabitacion().getTematica() }</td>
 							<td>${r.fechaEntrada }</td>
 							<td>${r.fechaSalida }</td>
+							<td>${r.precioAPagar } Euros</td>
 							<td>${r.tipoPago }</td>
 
 
