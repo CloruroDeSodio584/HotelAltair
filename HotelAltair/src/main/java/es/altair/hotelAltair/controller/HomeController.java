@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -165,10 +166,20 @@ public class HomeController {
 		
 		String tipoPago =request.getParameter("tipoPago");
 		
+		//INICIO COMPROBACIONES DE FECHA
+		
 		boolean fechaCorrecta = compruebaFechas(fechaEntrada, fechaSalida);
 		
-		if(!fechaCorrecta)
-		return "redirect:/?mensaje=Fecha de Salida Incorrecta vuelva a intentarlo";
+		if(!compruebaFechas(fechaEntrada, fechaSalida)) {
+			return "redirect:/?mensaje=Fecha de Salida Incorrecta vuelva a intentarlo";
+		}
+		
+		if (!comrpuebaHabitacionLibre(fechaEntrada, fechaSalida, habitacionReservar.getIdHabitacion(), habitacionReservar.getNumeroHab())) {
+			 return "redirect:/?mensaje=Todas las habitaciones estan ocupadas por al menos un dia en concreto, vuelva a intentarlo";
+		}
+		
+		
+		//FIN COMPROBACIONES DE FECHA
 		
 		double precioApagar = precioFecha(fechaEntrada, fechaSalida ,habitacionReservar.getTipoHabitacion());
 		
@@ -330,26 +341,64 @@ public class HomeController {
 	}
 	
 	
-	private boolean comrpuebaHabitacionLibre(String fechaEntrada, String fechaSalida, int tipoHabitacion , int numHabitaciones) {
+	private boolean comrpuebaHabitacionLibre(String fechaEntrada, String fechaSalida, int idHabitacion , int numHabitaciones) {
 		boolean estaLibre = true;
 	
 		Date fechaEntradaDate = convertirStringaDate(fechaEntrada);
 		Date fechaSalidaDate = convertirStringaDate(fechaSalida);
 		
-		List<Reserva> reservasPorTipo = reservaDAO.listarReservaPorTipoHabitacion(tipoHabitacion);
+		//Obtengo todas las reservas de ese tipo de habitacion
+		List<Reserva> reservasPorTipo = reservaDAO.listarReservaPorTipoHabitacion(idHabitacion);
 		
-		float dias = diasEntreDosFechas(fechaEntradaDate, fechaSalidaDate);
+
+		//OBTENGO TODAS LAS FECHAS ENTRE LA ENTRADA Y SALIDA
+		List<Date> fechas = obtenerFechasEntreDates(fechaEntradaDate, fechaSalidaDate);
+		
+		System.out.println("");
+		
+		int habitacionOcupada;
+		for (Date date : fechas) {
+			habitacionOcupada = 0;
+			for (Reserva r : reservasPorTipo) {
+				
+				if( (date.after(convertirStringaDate(r.getFechaEntrada())) && date.before(convertirStringaDate(r.getFechaSalida()))) | (date.equals(convertirStringaDate(r.getFechaEntrada())) | date.equals(convertirStringaDate(r.getFechaSalida())))   );
+				 habitacionOcupada ++;
+			}
+			
+			if(habitacionOcupada >= numHabitaciones) {
+				estaLibre = false;
+				break;
+			}
+		}
+		/*
+		 	PARA VER LOS DIAS
+		 for (Date date : fechas) {
+			String formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd").format(date);
+			
+			System.out.println("s");
+		}*/
+		
+		
+		
+		System.out.println("eh");
+		return estaLibre;
+	}	
+	
+	private List<Date> obtenerFechasEntreDates(Date fechaEntradaDate, Date fechaSalidaDate) {
 		
 		List<Date> fechas = new ArrayList<Date>();
 		
 		while(!fechaEntradaDate.after(fechaSalidaDate)) {
 			fechas.add(fechaEntradaDate);
-			fechaEntradaDate = fechaEntradaDate.
+			
+			Calendar c = Calendar.getInstance(); 
+			c.setTime(fechaEntradaDate); 
+			c.add(Calendar.DATE, 1);
+			fechaEntradaDate = c.getTime();		
 		}
 		
-		
-		return estaLibre;
-	}	
+		return fechas;
+	}
 	
 	
 	private double precioFecha(String fechaEntrada,String fechaSalida, int tipoHabitacion) {

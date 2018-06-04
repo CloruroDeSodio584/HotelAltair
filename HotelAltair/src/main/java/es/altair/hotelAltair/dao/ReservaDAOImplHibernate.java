@@ -36,11 +36,27 @@ private SessionFactory sessionFactory;
 	
 	@Transactional
 	@Override
-	public List<Reserva> listarReservaPorTipoHabitacion(int tipoHabitacion) {
+	public List<Reserva> listarReservaPorTipoHabitacion(int idHabitacion) {
 		Session sesion = sessionFactory.getCurrentSession();
-		return (List<Reserva>) sesion.createQuery("From Reserva WHERE tipoHabitacion=:t")
+		System.out.println("");
+		return (List<Reserva>) sesion.createQuery("From Reserva WHERE idHabitacion=:i")
+				.setParameter("i", idHabitacion)
+				.list();
+		
+		/*return (List<Reserva>) sesion.createSQLQuery("SELECT reserva.idReserva, reserva.idCliente, reserva.idTrabajador, reserva.idHabitacion, habitacion.numeroHab, habitacion.tematica, habitacion.tipoHabitacion , reserva.fechaEntrada, reserva.fechaSalida, reserva.precioAPagar, reserva.tipoPago  FROM reserva JOIN habitacion WHERE tipoHabitacion=:t")
+				.addEntity(Habitacion.class)
 				.setParameter("t", tipoHabitacion)
 				.list();
+		
+		/* 
+		 
+		  Session sesion = sessionFactory.getCurrentSession();
+	
+		return (List<Juego>) sesion.createSQLQuery("SELECT juegos.titulo, juegos.numJugadores, juegos.descripcion, juegos.pegi FROM juegoteca JOIN juegos WHERE idUsuario=:i")
+				.addEntity(Juego.class)
+				.setParameter("i", u.getIdUsuario()).list();
+		   
+		   */
 	}
 	
 
