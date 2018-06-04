@@ -67,7 +67,7 @@ h5 {
 			
 			<c:if test="${clienteLogin == null}"> 
 			<a href="registrar" role="button"
-			class="btn btn-link btn-sm derecha">registrar</a> 
+			class="btn btn-link btn-sm derecha">Registrarse</a> 
 			</c:if>
 			<c:if test="${clienteLogin != null}">
 					<a href="cerrarSesion" role="button"

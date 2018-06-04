@@ -64,7 +64,7 @@ h5 {
 				<f:form action="registrarse" class="form-horizontal" commandName="reg" method="POST" >
 
 					<div class="form-group">
-						<label for="name" class="cols-sm-2 control-label">Escribe tu nombre
+						<label for="name" class="cols-sm-2 control-label" style="color: white;">Escribe tu nombre
 							</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
@@ -77,7 +77,7 @@ h5 {
 
 					<div class="form-group">
 					<!-- AQUI PONIA EMAIL EN EL FOR EN LUGAR DE USERNAME -->
-						<label for="username" class="cols-sm-2 control-label">Escribe tus Apellidos
+						<label for="username" class="cols-sm-2 control-label" style="color: white;">Escribe tus Apellidos
 							</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
@@ -88,7 +88,7 @@ h5 {
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="username" class="cols-sm-2 control-label">Edad</label>
+						<label for="username" class="cols-sm-2 control-label" style="color: white;">Edad</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-users fa"
@@ -99,7 +99,7 @@ h5 {
 					</div>
 					
 					<div class="form-group">
-						<label for="confirm" class="cols-sm-2 control-label">Correo 
+						<label for="confirm" class="cols-sm-2 control-label" style="color: white;">Correo 
 							</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
@@ -111,7 +111,7 @@ h5 {
 					</div>
 
 					<div class="form-group">
-						<label for="password" class="cols-sm-2 control-label">Contraseña</label>
+						<label for="password" class="cols-sm-2 control-label" style="color: white;">Contraseña</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
 								<span class="input-group-addon"><i

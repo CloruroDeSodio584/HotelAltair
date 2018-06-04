@@ -27,7 +27,7 @@ h5 {
 	src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 
 </head>
-<body background="../images/top.jpg">
+<body style="background-repeat: no-repeat;background-image: url('https://1.bp.blogspot.com/-uifnlBVtbY0/WcM3yIUQ-MI/AAAAAAAABaM/Vz3kOUCnl6U1zgz4k8zKuFFDh0nREn6gQCLcBGAs/s1600/Tomorrowland-Theme-Hotel.jpg'); background-attachment: fixed;">
 	<div class="container">
 	
 	
@@ -43,7 +43,7 @@ h5 {
 				<form action="actualizarPerfil" class="form-horizontal" method="POST" >
 
 					<div class="form-group">
-						<label for="name" class="cols-sm-2 control-label">Escribe tu nombre
+						<label for="name" class="cols-sm-2 control-label" style="color: white;">Escribe tu nombre
 							</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
@@ -56,7 +56,7 @@ h5 {
 
 					<div class="form-group">
 					<!-- AQUI PONIA EMAIL EN EL FOR EN LUGAR DE USERNAME -->
-						<label for="username" class="cols-sm-2 control-label">Escribe tus Apellidos
+						<label for="username" class="cols-sm-2 control-label"  style="color: white;">Escribe tus Apellidos
 							</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
@@ -67,7 +67,7 @@ h5 {
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="username" class="cols-sm-2 control-label">Edad</label>
+						<label for="username" class="cols-sm-2 control-label"  style="color: white;">Edad</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-users fa"
@@ -79,7 +79,7 @@ h5 {
 					
 
 					<div class="form-group">
-						<label for="password" class="cols-sm-2 control-label">Contraseña</label>
+						<label for="password" class="cols-sm-2 control-label"  style="color: white;">Contraseña</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
 								<span class="input-group-addon"><i
