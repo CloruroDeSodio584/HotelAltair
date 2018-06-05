@@ -18,6 +18,8 @@ public interface ClienteDAO {
 	
 	Cliente obtenerClienteporId(int idCliente);
 	
+	Cliente obtenerClienteporCorreo(String correo);
+	
 	void ActualizarCliente(Cliente client);
 	
 	public String encriptarContraseña(String contraseña);

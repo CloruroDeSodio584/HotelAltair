@@ -24,13 +24,13 @@ private SessionFactory sessionFactory;
 		Trabajador trab = null;
 		
 		Session sesion = sessionFactory.getCurrentSession();
-		
-		trab = (Trabajador) sesion.createQuery("SELECT tr FROM Trabajador tr WHERE correo =:c AND password=AES_ENCRYPT(:p, :passphrase)")
+				
+		trab = (Trabajador) sesion.createQuery("SELECT tr FROM Trabajador tr WHERE correo =:c AND password=:p")
 				.setParameter("c", correo)
 				.setParameter("p", password)
-				.setParameter("passphrase", pass)
 				.uniqueResult();
 		
+		System.out.println("");
 		
 		return trab;
 	}

@@ -71,6 +71,20 @@ public class ClienteDAOImplHibernate implements ClienteDAO {
 		return correcto;
 	}
 	
+	@Transactional
+	@Override
+	public Cliente obtenerClienteporCorreo(String correo) {
+		Session sesion = sessionFactory.getCurrentSession();
+		
+		Cliente client = null;
+		
+		client = (Cliente) sesion.createQuery("FROM Cliente WHERE correo=:c")
+				.setParameter("c", correo)
+				.uniqueResult();
+		
+		
+		return client;
+	}
 
 	@Transactional
 	@Override
@@ -119,5 +133,7 @@ public class ClienteDAOImplHibernate implements ClienteDAO {
 		return contraseñaEncriptada;
 		
 	}
+
+	
 
 }

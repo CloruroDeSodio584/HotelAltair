@@ -32,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.altair.hotelAltair.bean.Cliente;
 import es.altair.hotelAltair.bean.Habitacion;
 import es.altair.hotelAltair.bean.Reserva;
+import es.altair.hotelAltair.bean.Trabajador;
 import es.altair.hotelAltair.dao.ClienteDAO;
 import es.altair.hotelAltair.dao.HabitacionDAO;
 import es.altair.hotelAltair.dao.ReservaDAO;
@@ -82,6 +83,12 @@ public class HomeController {
 	
 	@RequestMapping(value = "/entrar", method = RequestMethod.POST)
 	public String entrar(@ModelAttribute Cliente clienteLogin, Model model, HttpSession session) {
+	
+	    
+		if(((Trabajador)session.getAttribute("trabajadorLogin")) != null)
+	    	return "redirect:/?mensaje=Debe cerrar sesion como Trabajador";
+		
+		
 		
 		model.addAttribute("listarH", habitacionDAO.listarHabitaciones());
 		clienteLogin.setPassword(clienteDAO.encriptarContraseña(clienteLogin.getPassword()));
@@ -153,6 +160,8 @@ public class HomeController {
 		
 		return "reserva";
 	}
+	
+	
 	
 	@RequestMapping(value="/confirmarReserva", method = RequestMethod.POST)
 	public String confirmarReserva(Model model, HttpServletRequest request, HttpSession session) {
@@ -229,8 +238,11 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/registrarse", method = RequestMethod.POST)
-	public String registrarse(@ModelAttribute Cliente clienteLogin,@RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
-		
+	public String registrarse(@ModelAttribute Cliente clienteLogin,@RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje, HttpSession session) {
+		boolean esTrabajador = false;
+	    
+		if(((Trabajador)session.getAttribute("trabajadorLogin")) != null)
+	    	esTrabajador = true;
 
 		if(clienteDAO.validarEmail(clienteLogin)) {
 			
@@ -238,25 +250,171 @@ public class HomeController {
 			clienteDAO.insertar(clienteLogin);
 		}
 		else {
+			
+			if (esTrabajador) {
+			
+				return "redirect:/homeTrabajador?mensaje=Usuario YA Registrado";
+			
+			}else
 			return "redirect:/?mensaje=Usuario YA Registrado";
 		}
 		
+		if(esTrabajador) {
+			return "redirect:/homeTrabajador?mensaje=Usuario Registrado";
+		}
+		else
 		return "redirect:/?mensaje=Usuario Registrado";
 		
 	}
 	
+	// HOME TRABAJADOR
+	
+	@RequestMapping(value = "/loginTrabajador", method = RequestMethod.GET)
+	public ModelAndView loginTrabajador(Model model,HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		model.addAttribute("mensaje", mensaje);
+		
+		
+		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
+		
+		return new ModelAndView("loginTrabajador", "tra", new Trabajador());
+	}
+	
+	
+	@RequestMapping(value = "/entrarTrabajador", method = RequestMethod.POST)
+	public String entrarTrabajador(@ModelAttribute Trabajador trabajadorLogin, Model model, HttpSession session) {
+		
+		//HASTA QUE EL ADMINISTRADOR NO PUEDA CREAR TRABAJADORES
+		//trabajadorLogin.setPassword(clienteDAO.encriptarContraseña(trabajadorLogin.getPassword()));
+		trabajadorLogin = trabajadorDAO.comprobarTrabajador(trabajadorLogin.getCorreo(), trabajadorLogin.getPassword());
+		
+		if(trabajadorLogin != null) {
+			session.setAttribute("trabajadorLogin", trabajadorLogin);
+			System.out.println("Sesion iniciada con exito");
+			return "redirect:/homeTrabajador?mensaje=Sesion Iniciada Con exito";
+		}
+		System.out.println("Sesion no Iniciada");
+		return "redirect:/loginTrabajador?mensaje=Error en email o Password Incorrecto";
+		
+	}
+	@RequestMapping(value = "/homeTrabajador", method = RequestMethod.GET)
+	public String homeTrabajador(Model model,HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		model.addAttribute("mensaje", mensaje);
+		model.addAttribute("listarH", habitacionDAO.listarHabitaciones());
+		
+		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
+		
+		return "homeTrabajador";
+	}
+	
+	@RequestMapping(value="/reservaTrabajador", method = RequestMethod.GET)
+	public String reservaTrabajador(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		 model.addAttribute("mensaje", mensaje);
+		
+		 int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
+		 Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorId(idHabitacion);
+		 
+		 model.addAttribute("habitacion", habitacionReservar);
+		 model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
+		
+		return "reservaTrabajador";
+	}
+	
+	
+	@RequestMapping(value="/confirmarReservaTrabajador", method = RequestMethod.POST)
+	public String confirmarReservaTrabajador(Model model, HttpServletRequest request, HttpSession session) {
+
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		String correoCliente = request.getParameter("correo");
+		
+		Cliente cliente = clienteDAO.obtenerClienteporCorreo(correoCliente);
+		
+		if(cliente == null) {
+			return "redirect:/homeTrabajador?mensaje=Correo de Cliente Erroneo";
+		}		
+		Trabajador trabajador = (Trabajador)session.getAttribute("trabajadorLogin");	
+		
+		int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
+		Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorId(idHabitacion);
+		String fechaEntrada = request.getParameter("fechaEntrada");
+		String fechaSalida =  request.getParameter("fechaSalida");
+		
+		String tipoPago =request.getParameter("tipoPago");
+		
+		//INICIO COMPROBACIONES DE FECHA
+		
+		boolean fechaCorrecta = compruebaFechas(fechaEntrada, fechaSalida);
+		
+		if(!compruebaFechas(fechaEntrada, fechaSalida)) {
+			return "redirect:/homeTrabajador?mensaje=Fecha de Salida Incorrecta vuelva a intentarlo";
+		}
+		
+		if (!comrpuebaHabitacionLibre(fechaEntrada, fechaSalida, habitacionReservar.getIdHabitacion(), habitacionReservar.getNumeroHab())) {
+			 return "redirect:/homeTrabajador?mensaje=Todas las habitaciones estan ocupadas por al menos un dia en concreto, vuelva a intentarlo";
+		}
+		
+		
+		//FIN COMPROBACIONES DE FECHA
+		
+		double precioApagar = precioFecha(fechaEntrada, fechaSalida ,habitacionReservar.getTipoHabitacion());
+		
+		
+		
+		Reserva nuevaReserva = new Reserva(cliente, trabajador, habitacionReservar, fechaEntrada, fechaSalida, precioApagar, tipoPago);
+		
+		reservaDAO.insertarReserva(nuevaReserva);
+		
+		
+		return "redirect:/homeTrabajador?mensaje=Reserva Realizada Con exito";
+	}
+	
+	
+	
+	
+	
 	@RequestMapping(value="/cerrarSesion", method = RequestMethod.GET)
 	public String cerrarSesion(HttpSession session) {
-		
 		session.setAttribute("clienteLogin", null);
 		
 		return "redirect:/?mensaje=Sesion Cerrada Con exito";
 	}
 	
+	@RequestMapping(value="/cerrarSesionTrabajador", method = RequestMethod.GET)
+	public String cerrarSesionTrabajador(HttpSession session) {
+		session.setAttribute("trabajadorLogin", null);
+		
+		return "redirect:/loginTrabajador?mensaje=Sesion Cerrada Con exito";
+	}
 	
 	private boolean noLogueado(HttpSession session) {
 		Cliente clienteLogueado = (Cliente) session.getAttribute("clienteLogin");
 		if (clienteLogueado == null || session.isNew()) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean noLogueadoTrabajador(HttpSession session) {
+		Trabajador trabajadorLogueado = (Trabajador) session.getAttribute("trabajadorLogin");
+		if (trabajadorLogueado == null || session.isNew()) {
 			return true;
 		}
 		return false;
@@ -331,7 +489,7 @@ public class HomeController {
 		Date fechaSalidaDate = convertirStringaDate(fechaSalida);
 		
 		
-		if(fechaSalidaDate.before(fechaEntradaDate))
+		if(fechaSalidaDate.before(fechaEntradaDate) | fechaSalidaDate.equals(fechaEntradaDate))
 			fechaCorrecta = false;
 		
 		
