@@ -53,7 +53,7 @@ h5 {
 							</div>
 						</div>
 					</div>
-
+					<input type="hidden" hidden="hidden" class="form-control" name="idCliente" id="idCliente" value="${clienteLogin.idCliente}" />
 					<div class="form-group">
 					<!-- AQUI PONIA EMAIL EN EL FOR EN LUGAR DE USERNAME -->
 						<label for="username" class="cols-sm-2 control-label"  style="color: white;">Escribe tus Apellidos
@@ -77,7 +77,7 @@ h5 {
 						</div>
 					</div>
 					
-
+					<c:if test="${empty trabajadorLogin}">
 					<div class="form-group">
 						<label for="password" class="cols-sm-2 control-label"  style="color: white;">Contraseña</label>
 						<div class="cols-sm-10">
@@ -89,6 +89,8 @@ h5 {
 							</div>
 						</div>
 					</div>
+					
+					</c:if>
 
 					<div class="form-group ">
 					<button type="submit" class="btn btn-primary btn-lg btn-block login-button">Actualizar Perfil </button>

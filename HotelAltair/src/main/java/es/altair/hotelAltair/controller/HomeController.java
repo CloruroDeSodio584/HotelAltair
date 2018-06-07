@@ -107,6 +107,7 @@ public class HomeController {
 	@RequestMapping(value = "/misReservas", method = RequestMethod.GET)
 	public String misReservas(Model model, HttpServletRequest request ,HttpSession session) {
 		
+		
 		if(noLogueado(session)) {
 			model.addAttribute("errorLogin","Inicie sesión para entrar");
 			return "redirect:/?mensaje=Debe iniciar Sesion para continuar";
@@ -131,6 +132,7 @@ public class HomeController {
 	@RequestMapping(value="/modPerfil", method = RequestMethod.GET)
 	public String modPerfil(Model model, HttpServletRequest request ,HttpSession session) {
 		
+		
 		if(noLogueado(session)) {
 			model.addAttribute("errorLogin","Inicie sesión para entrar");
 			return "redirect:/?mensaje=Debe iniciar Sesion para continuar";
@@ -139,6 +141,23 @@ public class HomeController {
 		
 		model.addAttribute("clienteLogin", (Cliente)session.getAttribute("clienteLogin"));
 		
+		
+		return "modPerfil";
+	}
+	
+	@RequestMapping(value="/modPerfilTrabajador", method = RequestMethod.GET)
+	public String modPerfilTrabajador(Model model, HttpServletRequest request ,HttpSession session) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		 int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+		
+		
+		model.addAttribute("clienteLogin", clienteDAO.obtenerClienteporId(idCliente));
+		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
 		
 		return "modPerfil";
 	}
@@ -204,24 +223,37 @@ public class HomeController {
 	
 	@RequestMapping(value="/actualizarPerfil", method = RequestMethod.POST)
 	public String actualizarPerfil(Model model, HttpServletRequest request, HttpSession session) {
-
-		Cliente clienteLogueado = (Cliente) session.getAttribute("clienteLogin");
+		boolean esTrabajador = false;
+		
+		if(((Trabajador)session.getAttribute("trabajadorLogin")) != null)
+	    	esTrabajador = true;
+		
 		
 		String nombre = request.getParameter("nombre");
 		String apellidos =  request.getParameter("apellidos");
 		int edad = Integer.parseInt(request.getParameter("edad"));
-		String password =  clienteDAO.encriptarContraseña(request.getParameter("password")); 
+		int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+		
+		Cliente clienteLogueado = clienteDAO.obtenerClienteporId(idCliente);
 		
 		clienteLogueado.setNombre(nombre);
 		clienteLogueado.setApellidos(apellidos);
 		clienteLogueado.setEdad(edad);
-		clienteLogueado.setPassword(password);
+		
+		if(!esTrabajador) {
+			String password =  clienteDAO.encriptarContraseña(request.getParameter("password"));
+			clienteLogueado.setPassword(password);
+			}
 		
 		
 		
 		clienteDAO.ActualizarCliente(clienteLogueado);
 		
-		return "redirect:/?mensaje=Datos Actualizados con exito";
+		if(!esTrabajador)
+			return "redirect:/?mensaje=Datos Actualizados con exito";
+		else
+			 return "redirect:/datosClientes?mensaje=Cliente actualizado";
+		
 	}
 	
 	
@@ -232,7 +264,11 @@ public class HomeController {
 		int idReserva = Integer.parseInt(request.getParameter("idReserva"));
 		
 		reservaDAO.borrarReserva(idReserva);
+			
 		
+		if(((Trabajador)session.getAttribute("trabajadorLogin")) != null)
+			return "redirect:/datosClientes?mensaje=Reserva Borrada Correctamente";
+			
 		
 		return "redirect:/misReservas";
 	}
@@ -284,6 +320,10 @@ public class HomeController {
 	@RequestMapping(value = "/entrarTrabajador", method = RequestMethod.POST)
 	public String entrarTrabajador(@ModelAttribute Trabajador trabajadorLogin, Model model, HttpSession session) {
 		
+		
+		if(((Cliente)session.getAttribute("clienteLogin")) != null)
+	    	return "redirect:/loginTrabajador?mensaje=Debe cerrar sesion como Cliente para continuar";
+		
 		//HASTA QUE EL ADMINISTRADOR NO PUEDA CREAR TRABAJADORES
 		//trabajadorLogin.setPassword(clienteDAO.encriptarContraseña(trabajadorLogin.getPassword()));
 		trabajadorLogin = trabajadorDAO.comprobarTrabajador(trabajadorLogin.getCorreo(), trabajadorLogin.getPassword());
@@ -313,6 +353,38 @@ public class HomeController {
 		return "homeTrabajador";
 	}
 	
+	@RequestMapping(value = "/eliminarCliente", method = RequestMethod.GET)
+	public String eliminarCliente(Model model, HttpSession session, HttpServletRequest request) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+		
+		
+		
+		List<Reserva> reservasEliminar = reservaDAO.listarPorCliente(clienteDAO.obtenerClienteporId(idCliente));
+		
+		System.out.println("");
+		
+		if(reservasEliminar != null) {
+			
+			for (Reserva reserva : reservasEliminar) {
+				reservaDAO.borrarReserva(reserva.getIdReserva());
+			}
+			
+		}
+		
+		clienteDAO.borrarCliente(idCliente);
+
+		return "redirect:/datosClientes?mensaje=Cliente Borrado Correctamente";
+		
+	}
+	
+	
 	@RequestMapping(value="/reservaTrabajador", method = RequestMethod.GET)
 	public String reservaTrabajador(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
 		
@@ -331,6 +403,53 @@ public class HomeController {
 		 model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
 		
 		return "reservaTrabajador";
+	}
+	
+	@RequestMapping(value="/datosClientes", method = RequestMethod.GET)
+	public String datosClientes(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		model.addAttribute("mensaje", mensaje);
+		model.addAttribute("listaClientes", clienteDAO.listarClientes());
+		model.addAttribute("listaReservas", reservaDAO.listarTodos());
+		
+		
+		return "datosClientes";
+	}
+	
+	@RequestMapping(value = "/reservasCliente", method = RequestMethod.GET)
+	public String reservasCliente(Model model, HttpServletRequest request ,HttpSession session) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		
+		int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+		
+		Cliente n = clienteDAO.obtenerClienteporId(idCliente);
+		
+		List<Reserva> listaRservas = reservaDAO.listarPorCliente(n);
+		
+		System.out.println("");
+		
+		if(listaRservas.size() == 0 )
+			return "redirect:/datosClientes?mensaje=El cliente no tiene ninguna reserva";
+		
+		model.addAttribute("listarR", listaRservas);
+		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
+		
+		
+		
+		
+		return ("misReservas");
+		
 	}
 	
 	

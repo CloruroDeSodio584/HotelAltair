@@ -51,6 +51,7 @@ public class ClienteDAOImplHibernate implements ClienteDAO {
 		sesion.persist(client);
 			
 	}
+	
 
 	@Transactional
 	@Override

@@ -46,7 +46,7 @@ h5 {
 			arial-expanded="false" arial-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-
+		<c:if test="${empty trabajadorLogin }">
 		<div class="collapse navbar-collapse" id="navbarExample">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active"><a class="nav-link" href="homet">Inicio</a></li>
@@ -64,7 +64,25 @@ h5 {
 		</div>
 		<a href="cerrarSesion" role="button"
 			class="btn btn-link btn-sm derecha">cerrar Sesion</a>
+		</c:if>
+		
+		<c:if test="${!empty trabajadorLogin }">
+		
+		<div class="collapse navbar-collapse" id="navbarExample">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active"><a class="nav-link" href=homeTrabajador>Inicio</a></li>
 
+
+				<li class="nav-item active"><a class="nav-link"
+					href="misReservas">Todas Reservas</a></li>
+			</ul>
+
+		</div>
+		<a href="cerrarSesionTrabajador" role="button"
+			class="btn btn-link btn-sm derecha">cerrar Sesion</a>
+		
+		
+		</c:if>
 	</nav>
 
 	<!-- Inicio Mensaje Error/Exito -->
