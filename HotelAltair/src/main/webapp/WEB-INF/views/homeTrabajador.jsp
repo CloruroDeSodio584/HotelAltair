@@ -55,11 +55,14 @@ h5 {
 					
 					<c:if test="${trabajadorLogin != null}">
 					<li class="nav-item active"><a class="nav-link"
-					href="misReservas">Todas reservas</a></li>
+					href="contabilidad">Contabilidad</a></li>
 					
 					
 					<li class="nav-item active"><a style="color: silver;" class="nav-link"
 					href="datosClientes">Clientes</a></li>
+					
+					<li class="nav-item active"><a style="color: silver;" class="nav-link"
+					href="datosTrabajadores">Trabajadores</a></li>
 					</c:if>
 					
 			</ul>

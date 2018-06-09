@@ -14,6 +14,10 @@ public interface TrabajadorDAO {
 	
 	List<Trabajador> listarTrabajadores();
 	
+	List<Trabajador> listarTrabajadoresAdmin();
+	
+	List<Trabajador> listarAdministradores();
+	
 	void borrarTrabajador(int idTrabajador);
 	
 	Trabajador obtenerTrabajadorporId(int idTrabajador);

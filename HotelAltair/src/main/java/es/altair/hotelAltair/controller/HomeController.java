@@ -122,11 +122,30 @@ public class HomeController {
 	}
 	
 	
-	@RequestMapping(value="/registrar", method = RequestMethod.GET)
-	public ModelAndView registrar() {
+	@RequestMapping(value="/registrar", method = RequestMethod.GET )
+	public ModelAndView registrar(Model model,HttpSession session) {
 		
+		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
 		
 		return new ModelAndView("registrar", "reg", new Cliente());
+	}
+	
+	@RequestMapping(value="/anadirTrabajador", method = RequestMethod.GET )
+	public String anadirTrabajador(Model model,HttpSession session) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		Trabajador t = (Trabajador)session.getAttribute("trabajadorLogin");
+	
+		if(t.getTipoAcceso() != 2)
+			return "redirect:/datosTrabajadores?mensaje=No tiene los permisos necesarios";
+		
+		
+		
+		return "anadirTrabajador";
 	}
 	
 	@RequestMapping(value="/modPerfil", method = RequestMethod.GET)
@@ -161,6 +180,24 @@ public class HomeController {
 		
 		return "modPerfil";
 	}
+	
+	@RequestMapping(value="/modPerfilTrabajadorUsu", method = RequestMethod.GET)
+	public String modPerfilTrabajadorUsu(Model model, HttpServletRequest request ,HttpSession session) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		 int idTrabajador = Integer.parseInt(request.getParameter("idTrabajador"));
+		
+		
+		model.addAttribute("trabajadorCambiar", trabajadorDAO.obtenerTrabajadorporId(idTrabajador));
+		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
+		
+		return "modPerfilUsu";
+	}
+	
 	
 	
 	@RequestMapping(value="/reserva", method = RequestMethod.GET)
@@ -256,6 +293,67 @@ public class HomeController {
 		
 	}
 	
+	@RequestMapping(value="/actualizarPerfilUsu", method = RequestMethod.POST)
+	public String actualizarPerfilUsu(Model model, HttpServletRequest request, HttpSession session) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		int tipoAcceso = 0;
+		
+		String nombre = request.getParameter("nombre");
+		String apellidos =  request.getParameter("apellidos");
+		String idioma =  request.getParameter("idioma");
+		int edad = Integer.parseInt(request.getParameter("edad"));
+		int idTrabajador = Integer.parseInt(request.getParameter("idTrabajador"));
+	
+		
+		Trabajador trabajadorLogin = (Trabajador)session.getAttribute("trabajadorLogin");
+		
+		
+		
+		
+		Trabajador trabajadorCambiar = trabajadorDAO.obtenerTrabajadorporId(idTrabajador);
+		
+		
+		
+		trabajadorCambiar.setNombre(nombre);
+		trabajadorCambiar.setApellidos(apellidos);
+		trabajadorCambiar.setEdad(edad);
+		
+		trabajadorCambiar.setIdioma(idioma);
+		
+		if(trabajadorLogin.getTipoAcceso() == 2 ) {
+			 tipoAcceso = Integer.parseInt(request.getParameter("tipoAcceso"));
+			 
+			 if(trabajadorCambiar.getTipoAcceso() == 2 && trabajadorDAO.listarAdministradores().size() == 1 && tipoAcceso != 2 ) {
+				 return "redirect:/datosTrabajadores?mensaje=**Error** Debe al menos haber un administrador";
+				}
+			 
+			 
+			trabajadorCambiar.setTipoAcceso(tipoAcceso);
+			
+			
+			
+		}
+		
+		if (trabajadorLogin.getIdTrabajador() == idTrabajador) {
+			String password =  request.getParameter("password");
+			trabajadorCambiar.setPassword(password);
+		}
+		
+		
+	
+		
+		trabajadorDAO.ActualizarTrabajador(trabajadorCambiar);
+		
+		
+		 return "redirect:/datosTrabajadores?mensaje=Trabajador actualizado";
+		
+	}
+	
 	
 	
 	@RequestMapping(value="/cancelarReserva", method = RequestMethod.GET)
@@ -289,10 +387,10 @@ public class HomeController {
 			
 			if (esTrabajador) {
 			
-				return "redirect:/homeTrabajador?mensaje=Usuario YA Registrado";
+				return "redirect:/homeTrabajador?mensaje=Email YA Registrado";
 			
 			}else
-			return "redirect:/?mensaje=Usuario YA Registrado";
+			return "redirect:/?mensaje=Email YA Registrado";
 		}
 		
 		if(esTrabajador) {
@@ -300,6 +398,32 @@ public class HomeController {
 		}
 		else
 		return "redirect:/?mensaje=Usuario Registrado";
+		
+	}
+	
+	@RequestMapping(value = "/anadirTrabajadorCofirmar", method = RequestMethod.POST)
+	public String anadirTrabajadorConfirmar(HttpServletRequest request,HttpSession session) {
+		
+		String nombre = request.getParameter("nombre");
+		String apellidos =  request.getParameter("apellidos");
+		String correo =  request.getParameter("correo");
+		String idioma =  request.getParameter("idioma");
+		int edad = Integer.parseInt(request.getParameter("edad"));
+		int tipoAcceso = Integer.parseInt(request.getParameter("tipoAcceso"));
+		String password =  request.getParameter("password");
+		
+		Trabajador nuevoTrabajador = new Trabajador(nombre, apellidos, tipoAcceso, edad, idioma, correo, password);
+		
+		
+		if(trabajadorDAO.validarEmail(nuevoTrabajador)) {
+			nuevoTrabajador.setPassword(clienteDAO.encriptarContraseña(password));
+			trabajadorDAO.anadirTrabajador(nuevoTrabajador);
+		}
+		else 
+			return "redirect:/datosTrabajadores?mensaje=Email YA Registrado";
+		
+
+		return "redirect:/datosTrabajadores?mensaje=Trabajador Registrado Correctamente";
 		
 	}
 	
@@ -329,8 +453,12 @@ public class HomeController {
 		trabajadorLogin = trabajadorDAO.comprobarTrabajador(trabajadorLogin.getCorreo(), trabajadorLogin.getPassword());
 		
 		if(trabajadorLogin != null) {
+			if(trabajadorLogin.getTipoAcceso() == 0)
+				return "redirect:/loginTrabajador?mensaje=Trabajador dado de baja";
+			
+			
 			session.setAttribute("trabajadorLogin", trabajadorLogin);
-			System.out.println("Sesion iniciada con exito");
+			
 			return "redirect:/homeTrabajador?mensaje=Sesion Iniciada Con exito";
 		}
 		System.out.println("Sesion no Iniciada");
@@ -384,6 +512,35 @@ public class HomeController {
 		
 	}
 	
+	@RequestMapping(value = "/eliminarTrabajador", method = RequestMethod.GET)
+	public String eliminarTrabajador(Model model, HttpSession session, HttpServletRequest request) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		int idTrabajador = Integer.parseInt(request.getParameter("idTrabajador"));
+		
+		Trabajador tra = trabajadorDAO.obtenerTrabajadorporId(idTrabajador);
+		
+		if(tra.getTipoAcceso() == 2 && trabajadorDAO.listarAdministradores().size() == 1) {
+			return "redirect:/datosTrabajadores?mensaje=**Error** Debe al menos haber un administrador";
+		}
+		
+		
+		
+		tra.setTipoAcceso(0);
+		
+		
+		trabajadorDAO.ActualizarTrabajador(tra);
+
+
+		return "redirect:/datosTrabajadores?mensaje=Trabajador dado de baja Correctamente";
+		
+	}
+	
 	
 	@RequestMapping(value="/reservaTrabajador", method = RequestMethod.GET)
 	public String reservaTrabajador(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
@@ -422,6 +579,30 @@ public class HomeController {
 		return "datosClientes";
 	}
 	
+	@RequestMapping(value="/datosTrabajadores", method = RequestMethod.GET)
+	public String datosTrabajadores(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		model.addAttribute("mensaje", mensaje);
+		
+		Trabajador trabajadorLogin = (Trabajador)session.getAttribute("trabajadorLogin");
+		
+		if(trabajadorLogin.getTipoAcceso() == 2)
+			model.addAttribute("listaTrabajadores", trabajadorDAO.listarTrabajadoresAdmin());
+		else
+		model.addAttribute("listaTrabajadores", trabajadorDAO.listarTrabajadores());
+		
+		model.addAttribute("tipoT", trabajadorLogin);
+		
+		
+		return "datosTrabajadores";
+	}
+	
 	@RequestMapping(value = "/reservasCliente", method = RequestMethod.GET)
 	public String reservasCliente(Model model, HttpServletRequest request ,HttpSession session) {
 		
@@ -449,6 +630,35 @@ public class HomeController {
 		
 		
 		return ("misReservas");
+		
+	}
+	
+	@RequestMapping(value = "/contabilidad", method = RequestMethod.GET)
+	public String contabilidad(Model model, HttpServletRequest request ,HttpSession session) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		Trabajador trabajador = (Trabajador)session.getAttribute("trabajadorLogin");
+		
+		if(trabajador.getTipoAcceso() != 2)
+		 return "redirect:/homeTrabajador?mensaje=No tiene el tipo de autorizacion para entrar aqui";
+		
+		List<Reserva> nReserva = reservaDAO.listarTodos();
+		
+		double total = 0;
+		
+		for (Reserva reserva : nReserva) {
+			total = total + reserva.getPrecioAPagar();
+		}
+		
+		model.addAttribute("listaReservas", nReserva );
+		model.addAttribute("total", total);
+		
+		
+		return ("contabilidad");
 		
 	}
 	

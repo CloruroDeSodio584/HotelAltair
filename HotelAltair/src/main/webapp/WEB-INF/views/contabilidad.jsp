@@ -46,27 +46,8 @@ h5 {
 			arial-expanded="false" arial-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<c:if test="${empty trabajadorLogin }">
-		<div class="collapse navbar-collapse" id="navbarExample">
-			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active"><a class="nav-link" href="homet">Inicio</a></li>
-
-
-				<li class="nav-item active"><a class="nav-link"
-					href="misReservas">Mis reservas</a></li>
-					
-					<li class="nav-item active"><a style="color: silver;" class="nav-link"
-					href="modPerfil">Modificar Perfil</a></li>
-
-
-			</ul>
-
-		</div>
-		<a href="cerrarSesion" role="button"
-			class="btn btn-link btn-sm derecha">cerrar Sesion</a>
-		</c:if>
 		
-		<c:if test="${!empty trabajadorLogin }">
+		
 		
 		<div class="collapse navbar-collapse" id="navbarExample">
 			<ul class="navbar-nav mr-auto">
@@ -88,7 +69,7 @@ h5 {
 			class="btn btn-link btn-sm derecha">cerrar Sesion</a>
 		
 		
-		</c:if>
+		
 	</nav>
 
 	<!-- Inicio Mensaje Error/Exito -->
@@ -170,68 +151,36 @@ h5 {
 	<!-- Tabla de Habitaciones -->
 
 	<div style="padding-top: 15px" class="container">
-		<c:if test="${!empty listarR}">
+		<c:if test="${!empty listaReservas}">
 			<table class="table table-md-6 table-striped table-inverse">
 				<thead>
 					<tr>
+						<th class="">Correo Cliente</th>
 						<th class="">Tematica Habitacion</th>
 						<th class="">Fecha Entrada</th>
 						<th class="">Fecha Salida</th>
 						<th class="">Precio</th>
-						<th class="">Tipo Pago</th>
-						<c:if test="${!empty trabajadorLogin }">
+						<th class="">Tipo Pago</th>	
 						<th class="">Trabajador Reserva</th>
-						</c:if>
+					
 
 					</tr>
 				</thead>
 				<tbody>
 
-					<c:forEach items="${listarR}" var="r">
+					<c:forEach items="${listaReservas}" var="r">
 						<tr>
+							<td>${r.getCliente().getCorreo() } </td>
 							<td>${r.getHabitacion().getTematica() }</td>
 							<td>${r.fechaEntrada }</td>
 							<td>${r.fechaSalida }</td>
 							<td>${r.precioAPagar } Euros</td>
 							<td>${r.tipoPago }</td>
-							<c:if test="${!empty trabajadorLogin }">
 							<td>${r.getTrabajador().getNombre() } ${r.getTrabajador().getApellidos() }</td>
-							</c:if>
+							
 
 
 							<td>
-
-								<button type="button" class="btn btn-primary"
-									data-toggle="modal" data-target="#cancelarReserva${r.idReserva }">
-									Cancelar Reserva</button> 
-									
-									<button type="button" class="btn btn-dark">Solicitar factura</button>
-									
-									<!-- Modal -->
-								<div class="modal fade" id="cancelarReserva${r.idReserva }" tabindex="-1"
-									role="dialog" aria-labelledby="exampleModalLabel"
-									aria-hidden="true">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h5  style="color: black;" class="modal-title" id="exampleModalLabel">Cancelar
-												</h5>
-												<button type="button" class="close" data-dismiss="modal"
-													aria-label="Close">
-													<span aria-hidden="true">&times;</span>
-												</button>
-											</div>
-											<div style="color: black;" class="modal-body">¿Esta seguro de cancelar la reserva ${r.getHabitacion().getTematica()}?</div>
-											<div class="modal-footer">
-												<button style="color: black;" type="button" class="btn btn-secondary"
-													data-dismiss="modal">No</button>
-												<button style="color: black;" type="button" class="btn btn-primary" onclick="location.href='cancelarReserva?idReserva=${r.idReserva}'">Si
-													</button>
-											</div>
-										</div>
-									</div>
-								</div>
-
 							</td>
 
 
@@ -240,6 +189,7 @@ h5 {
 				</tbody>
 			</table>
 		</c:if>
+		<label style="color: white;">Total: ${total } euros </label>
 	</div>
 	
 		<!-- Footer -->

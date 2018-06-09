@@ -49,14 +49,14 @@ private SessionFactory sessionFactory;
 		Session sesion = sessionFactory.getCurrentSession();
 		boolean correcto = true;
 		
-		sesion.beginTransaction();
+	
 		
 		if( (Trabajador) sesion.createQuery("FROM Trabajador WHERE correo=:c")
 				.setParameter("c", trabajador.getCorreo())
 				.uniqueResult() != null)
 			correcto = false;
 		
-		sesion.getTransaction().commit();
+
 		
 		
 		return correcto;
@@ -66,7 +66,21 @@ private SessionFactory sessionFactory;
 	@Override
 	public List<Trabajador> listarTrabajadores() {
 		Session sesion = sessionFactory.getCurrentSession();
+		return (List<Trabajador>) sesion.createQuery("FROM Trabajador where tipoAcceso != 0").list();
+	}
+	
+	@Transactional
+	@Override
+	public List<Trabajador> listarTrabajadoresAdmin() {
+		Session sesion = sessionFactory.getCurrentSession();
 		return (List<Trabajador>) sesion.createQuery("FROM Trabajador").list();
+	}
+	
+	@Transactional
+	@Override
+	public List<Trabajador> listarAdministradores() {
+		Session sesion = sessionFactory.getCurrentSession();
+		return (List<Trabajador>) sesion.createQuery("FROM Trabajador where tipoAcceso = 2").list();
 	}
 
 	@Transactional

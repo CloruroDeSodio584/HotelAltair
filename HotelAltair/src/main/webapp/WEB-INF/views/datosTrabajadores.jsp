@@ -52,11 +52,11 @@ h5 {
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item active"><a class="nav-link" href="homeTrabajador">Inicio</a></li>
 
-
 					<li class="nav-item active"><a class="nav-link"
-						href="contabilidad">Contabilidad</a></li>
-						
-						<li class="nav-item active"><a style="color: silver;" class="nav-link"
+					href="contabilidad">Contabilidad</a></li>
+					
+					
+					<li class="nav-item active"><a style="color: silver;" class="nav-link"
 					href="datosClientes">Clientes</a></li>
 					
 					<li class="nav-item active"><a style="color: silver;" class="nav-link"
@@ -141,40 +141,52 @@ h5 {
 		<!-- Tabla de Habitaciones -->
 
 		<div style="padding-top: 50px" class="container">
-			<c:if test="${!empty listaClientes}">
+			<c:if test="${!empty listaTrabajadores}">
 				<table class="table table-md-6 table-striped table-inverse">
 					<thead>
 						<tr>
 							<th class="">Nombre</th>
 							<th class="">Apellidos</th>
 							<th class="">Edad</th>
+							<th class="">Idioma</th>
 							<th class="">Correo</th>
 
 						</tr>
 					</thead>
 					<tbody>
 
-						<c:forEach items="${listaClientes }" var="r">
+						<c:forEach items="${listaTrabajadores }" var="r">
+						
+						
 							<tr>
 								<td>${r.nombre }</td>
 								<td>${r.apellidos }</td>
 								<td>${r.edad }</td>
+								<td>${r.idioma }</td>
 								<td>${r.correo }</td>
 
 
 
 								<td>
-
+								
+								<c:if test="${tipoT.tipoAcceso == 1 && (tipoT.idTrabajador == r.idTrabajador) }">		
+								<button type="button" class="btn btn-warning" onclick="location.href='modPerfilTrabajadorUsu?idTrabajador=${r.idTrabajador}'">Modificar Trabajador</button>
+									</c:if>
+					
+								<c:if test="${tipoT.tipoAcceso == 2 }">
+								
+								
+								<button type="button" class="btn btn-warning" onclick="location.href='modPerfilTrabajadorUsu?idTrabajador=${r.idTrabajador}'">Modificar Trabajador</button>
+								<c:if test="${r.tipoAcceso != 0 }">
 									<button type="button" class="btn btn-primary"
-										data-toggle="modal" data-target="#eliminarCliente${r.idCliente }">
-										Eliminar Cliente</button> 
+										data-toggle="modal" data-target="#eliminarTrabajador${r.idTrabajador }">
+										Dar de baja Trabajador</button> 
 										
-										<button type="button" class="btn btn-warning" onclick="location.href='reservasCliente?idCliente=${r.idCliente}'">Ver Reservas</button>
 										
-										<button type="button" class="btn btn-warning" onclick="location.href='modPerfilTrabajador?idCliente=${r.idCliente}'">Modificar Cliente</button>
+										
 										
 										<!-- Modal -->
-									<div class="modal fade" id="eliminarCliente${r.idCliente }" tabindex="-1"
+									<div class="modal fade" id="eliminarTrabajador${r.idTrabajador }" tabindex="-1"
 										role="dialog" aria-labelledby="exampleModalLabel"
 										aria-hidden="true">
 										<div class="modal-dialog" role="document">
@@ -187,29 +199,31 @@ h5 {
 														<span aria-hidden="true">&times;</span>
 													</button>
 												</div>
-												<div class="modal-body" style="color: black;">Eliminar este cliente implica tambien eliminar aquellas reservas relacionadas con este</div>
+												<div class="modal-body" style="color: black;">¿Esta seguro en dar de baja a este Trabajador?</div>
 												<div class="modal-footer">
 													<button type="button" class="btn btn-secondary"
 														data-dismiss="modal">No</button>
-													<button type="button" class="btn btn-primary" onclick="location.href='eliminarCliente?idCliente=${r.idCliente}'">Si
+													<button type="button" class="btn btn-primary" onclick="location.href='eliminarTrabajador?idTrabajador=${r.idTrabajador}'">Si
 														</button>
 												</div>
 											</div>
 										</div>
 									</div>
-
-
+									</c:if>
+									</c:if>
+									
 								</td>
 
 
 							</tr>
+							
+				
 						</c:forEach>
 					</tbody>
 				</table>
 			</c:if>
-			
-			<button type="button" class="btn btn-dark">listado de Clientes</button>
-			
+			<c:if test="${tipoT.tipoAcceso == 2 }">
+			<button type="button" onclick="location.href='anadirTrabajador'" class="btn btn-success">Añadir Trabajador</button> </c:if>
 		</div>
 
 		<!-- Footer -->

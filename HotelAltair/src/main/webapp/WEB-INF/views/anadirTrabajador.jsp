@@ -27,10 +27,9 @@ h5 {
 	src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 
 </head>
-<body style="background-repeat: no-repeat;background-image: url('http://www.slowtourismciociaria.com/wp-content/uploads/2015/09/slide1.jpg'); background-attachment: fixed;" >
-<div> 
-
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<body style="background-repeat: no-repeat;background-image: url('https://1.bp.blogspot.com/-uifnlBVtbY0/WcM3yIUQ-MI/AAAAAAAABaM/Vz3kOUCnl6U1zgz4k8zKuFFDh0nREn6gQCLcBGAs/s1600/Tomorrowland-Theme-Hotel.jpg'); background-attachment: fixed;">
+	
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark">
 		<figure class="figure mt-0 mb-0">
 			<a class="navbar-brand" href=""><img
 				src="<c:url value="/resources/images/hotel.png" />" class="figure-img img-fluid rounded"
@@ -45,18 +44,41 @@ h5 {
 
 		<div class="collapse navbar-collapse" id="navbarExample">
 			<ul class="navbar-nav mr-auto">
-			<c:if test="${trabajadorLogin != null}">
 				<li class="nav-item active"><a class="nav-link"
-					href="homeTrabajador">Inicio</a></li> </c:if>
+					href="">Inicio</a></li>
 					
-					<c:if test="${trabajadorLogin == null}">
-				<li class="nav-item active"><a class="nav-link"
-					href="homet">Inicio</a></li> </c:if>
-			</ul>	
-		</div>
-	</nav>
+					
+					<li class="nav-item active"><a class="nav-link"
+					href="contabilidad">Contabilidad</a></li>
+					
+					
+					<li class="nav-item active"><a style="color: silver;" class="nav-link"
+					href="datosClientes">Clientes</a></li>
+					
+					<li class="nav-item active"><a style="color: silver;" class="nav-link"
+					href="datosTrabajadores">Trabajadores</a></li>
+				
+					
+			</ul>
+			
+			
 
+		
+			
+					<a href="cerrarSesionTrabajador" role="button"
+			class="btn btn-link btn-sm derecha">cerrar Sesion</a>  
+			<!-- Formulario Entrar -->
+			
+		
+		</div>
+
+	</nav>
+	
+	
+	
 	<div class="container">
+	
+	
 		<div class="row main">
 			<div class="panel-heading">
 				<div class="panel-title text-center">
@@ -66,39 +88,29 @@ h5 {
 			</div>
 		
 			<div class="main-login main-center">
-				<f:form action="registrarse" class="form-horizontal" commandName="reg" method="POST" >
+				<form action="anadirTrabajadorCofirmar" class="form-horizontal" method="POST" >
 
 					<div class="form-group">
-						<label for="name" class="cols-sm-2 control-label" style="color: white;">Escribe tu nombre
+						<label for="name" class="cols-sm-2 control-label" style="color: white;">Escribe nombre
 							</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-user fa"
 									aria-hidden="true"></i></span> <input type="text" class="form-control"
-									name="nombre" id="nombre" required="required" placeholder="Escribe tu nombre" />
+									name="nombre" id="nombre" required="required" placeholder="Escribe nombre" />
 							</div>
 						</div>
 					</div>
-
+			
 					<div class="form-group">
 					<!-- AQUI PONIA EMAIL EN EL FOR EN LUGAR DE USERNAME -->
-						<label for="username" class="cols-sm-2 control-label" style="color: white;">Escribe tus Apellidos
+						<label for="username" class="cols-sm-2 control-label"  style="color: white;">Escribe Apellidos
 							</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="far fa-user"></i></span> <input
 									type="text" required="required" class="form-control" name="apellidos" id="apellidos"
-									placeholder="Escribe tus apellidos" />
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="username" class="cols-sm-2 control-label" style="color: white;">Edad</label>
-						<div class="cols-sm-10">
-							<div class="input-group">
-								<span class="input-group-addon"><i class="fa fa-users fa"
-									aria-hidden="true"></i></span> <input type="number" class="form-control"
-									name="edad" id="edad" required="required"  min="14" max="99" placeholder="Escribe tu edad" />
+									placeholder="Escribe apellidos" />
 							</div>
 						</div>
 					</div>
@@ -114,25 +126,63 @@ h5 {
 							</div>
 						</div>
 					</div>
-
+					
+					
 					<div class="form-group">
-						<label for="password" class="cols-sm-2 control-label" style="color: white;">Contraseña</label>
+						<label for="idioma" class="cols-sm-2 control-label"  style="color: white;">Escribe el idioma
+							</label>
+						<div class="cols-sm-10">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="far fa-user"></i></span> <input
+									type="text" required="required" class="form-control" name="idioma" id="idioma"
+									placeholder="Escribe el idioma" />
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="username" class="cols-sm-2 control-label"  style="color: white;">Edad</label>
+						<div class="cols-sm-10">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-users fa"
+									aria-hidden="true"></i></span> <input type="number" class="form-control"
+									name="edad" id="edad" required="required"  min="18" max="99" placeholder="Escribe tu edad" />
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="username" class="cols-sm-2 control-label"  style="color: white;">Tipo Acceso</label>
+						<div class="cols-sm-10">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-users fa"
+									aria-hidden="true"></i></span> <input type="number" class="form-control"
+									name="tipoAcceso" id="tipoAcceso" required="required" min="0" max="2" placeholder="Escribe tipo Acceso" />
+							</div>
+						</div>
+					</div>
+					
+				
+					<div class="form-group">
+						<label for="password" class="cols-sm-2 control-label"  style="color: white;">Contraseña</label>
 						<div class="cols-sm-10">
 							<div class="input-group">
 								<span class="input-group-addon"><i
 									class="fa fa-lock fa-lg" aria-hidden="true"></i></span> <input
 									type="password" required="required" class="form-control" name="password"
-									id="password" placeholder="Escribe tu contraseña" />
+									id="password" placeholder="Escribe contraseña" />
 							</div>
 						</div>
 					</div>
+					
+			
 
 					<div class="form-group ">
-					<button type="submit" class="btn btn-primary btn-lg btn-block login-button">Registrar </button>
+					<button type="submit" class="btn btn-primary btn-lg btn-block login-button">Añadir Trabajador </button>
 						
 					</div>
 				
-				</f:form>
+				</form>
 			</div>
 		</div>
 	
@@ -150,7 +200,5 @@ h5 {
 	<script src="../js/jquery-3.2.1.slim.min.js"></script>
 	<script src="../js/popper.min.js"></script>
 	<script src="../js/bootstrap.min.js"></script>
-	
-	</div>
 </body>
 </html>

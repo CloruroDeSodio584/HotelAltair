@@ -47,7 +47,7 @@ h5 {
 		<div class="collapse navbar-collapse" id="navbarExample">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active"><a class="nav-link"
-					href="homet">Inicio</a></li>
+					href="homeTrabajador">Inicio</a></li>
 			</ul>
 			
 			<!-- Formulario Entrar -->

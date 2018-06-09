@@ -49,6 +49,8 @@ h5 {
 				<li class="nav-item active"><a class="nav-link"
 					href="homet">Inicio</a></li>
 			</ul>
+			<a href="cerrarSesion" role="button"
+			class="btn btn-link btn-sm derecha">cerrar Sesion</a> 
 			
 			<!-- Formulario Entrar -->
 			
