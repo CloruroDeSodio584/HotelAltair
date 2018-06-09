@@ -131,7 +131,7 @@ h5 {
 			<div class="carousel-inner classBack">
 				<div class="carousel-item active">
 					<img class="d-block w-100"
-						src="<c:url value="/resources/images/elite-hotel-2.jpg" />"
+						src="<c:url value="/resources/images/pecine.jpg" />"
 						alt="First slide">
 					<div class="carousel-caption d-none d-md-block">
 						<h5>Comedor Principal</h5>
@@ -142,7 +142,7 @@ h5 {
 
 				<div class="carousel-item">
 					<img class="d-block w-100"
-						src="<c:url value="/resources/images/hotel-elite-8.jpg" />"
+						src="<c:url value="/resources/images/anden.jpg" />"
 						alt="Second slide">
 					<div class="carousel-caption d-none d-md-block">
 						<h5>Patio de Zeus</h5>
