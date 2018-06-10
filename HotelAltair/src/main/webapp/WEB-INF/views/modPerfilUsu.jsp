@@ -147,7 +147,7 @@ h5 {
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-users fa"
 									aria-hidden="true"></i></span> <input type="number" class="form-control"
-									name="tipoAcceso" id="tipoAcceso" required="required" value="${trabajadorCambiar.tipoAcceso}"  min="0" max="2" placeholder="Escribe tipo Acceso" />
+									name="tipoAcceso" id="tipoAcceso" required="required" value="${trabajadorCambiar.tipoAcceso}"  min="1" max="2" placeholder="Escribe tipo Acceso" />
 							</div>
 						</div>
 					</div>

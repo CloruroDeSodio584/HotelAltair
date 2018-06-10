@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.persistence.Convert;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -21,6 +23,8 @@ import javax.servlet.http.HttpSession;
 import org.junit.runner.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -57,7 +61,8 @@ public class HomeController {
 	@Autowired
 	private ReservaDAO reservaDAO;
 	
-	
+	@Autowired
+	private JavaMailSender mailsender;
 	
 	
 
@@ -341,7 +346,7 @@ public class HomeController {
 		
 		if (trabajadorLogin.getIdTrabajador() == idTrabajador) {
 			String password =  request.getParameter("password");
-			trabajadorCambiar.setPassword(password);
+			trabajadorCambiar.setPassword(clienteDAO.encriptarContraseña(password));
 		}
 		
 		
@@ -449,7 +454,7 @@ public class HomeController {
 	    	return "redirect:/loginTrabajador?mensaje=Debe cerrar sesion como Cliente para continuar";
 		
 		//HASTA QUE EL ADMINISTRADOR NO PUEDA CREAR TRABAJADORES
-		//trabajadorLogin.setPassword(clienteDAO.encriptarContraseña(trabajadorLogin.getPassword()));
+		trabajadorLogin.setPassword(clienteDAO.encriptarContraseña(trabajadorLogin.getPassword()));
 		trabajadorLogin = trabajadorDAO.comprobarTrabajador(trabajadorLogin.getCorreo(), trabajadorLogin.getPassword());
 		
 		if(trabajadorLogin != null) {
@@ -656,6 +661,13 @@ public class HomeController {
 		
 		model.addAttribute("listaReservas", nReserva );
 		model.addAttribute("total", total);
+		
+		try {
+			enviarMail("adrianoc96@hotmail.com", "0 euros al mes", "http://localhost:8080/hotelAltair/?mensaje=Sesion%20Iniciada%20Con%20exito");
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		return ("contabilidad");
@@ -957,6 +969,20 @@ public class HomeController {
 		}
 		
 		return fecha1;
+	}
+	
+	
+	private void enviarMail(String a, String desde, String texto) throws MessagingException {
+		
+		MimeMessage message = mailsender.createMimeMessage();
+		
+		MimeMessageHelper helper = new MimeMessageHelper(message, true);
+		helper.setSubject(desde);
+		helper.setTo(a);
+		helper.setText(texto);
+		
+		mailsender.send(message);
+		
 	}
 	
 	
