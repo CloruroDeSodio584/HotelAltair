@@ -196,6 +196,9 @@ h5 {
 							<td>${r.tipoPago }</td>
 							<c:if test="${!empty trabajadorLogin }">
 							<td>${r.getTrabajador().getNombre() } ${r.getTrabajador().getApellidos() }</td>
+							<td>	
+							
+							</td>
 							</c:if>
 
 
@@ -205,7 +208,9 @@ h5 {
 									data-toggle="modal" data-target="#cancelarReserva${r.idReserva }">
 									Cancelar Reserva</button> 
 									
+									
 									<button type="button" class="btn btn-dark">Solicitar factura</button>
+									
 									
 									<!-- Modal -->
 								<div class="modal fade" id="cancelarReserva${r.idReserva }" tabindex="-1"

@@ -59,6 +59,14 @@ private SessionFactory sessionFactory;
 		   */
 	}
 	
+	@Transactional
+	@Override
+	public void actualizarReserva(Reserva reserva) {
+		Session sesion = sessionFactory.getCurrentSession();
+		sesion.update(reserva);
+
+	}
+	
 
 	@Transactional
 	@Override

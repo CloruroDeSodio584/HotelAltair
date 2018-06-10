@@ -14,6 +14,6 @@ public interface ReservaDAO {
 	void borrarReserva(int idReserva);
 	Reserva obtenerReservaPorId(int idReserva);
     List<Reserva> listarReservaPorTipoHabitacion(int tipoHabitacion);
-	
+	void actualizarReserva(Reserva reserva);
 	
 }

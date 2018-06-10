@@ -36,7 +36,6 @@ public class Reserva implements Serializable {
 	String fechaEntrada;
 
 	String fechaSalida;
-
 	
 	double precioAPagar;
 
@@ -57,9 +56,7 @@ public class Reserva implements Serializable {
 		
 		this.precioAPagar = precioAPagar;
 		this.tipoPago = tipoPago;
-
 	}
-	
 
 	public int getIdReserva() {
 		return idReserva;
