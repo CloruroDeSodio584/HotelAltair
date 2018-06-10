@@ -22,6 +22,7 @@ public class Habitacion implements Serializable {
 	private int tipoHabitacion;
 	private String tematica;
 	private int numeroHab;
+	private String uuid;
 	
 	@OneToMany(mappedBy="habitacion", cascade=CascadeType.ALL)
 	public Set<Reserva> reservas = new HashSet<Reserva>();
@@ -30,13 +31,21 @@ public class Habitacion implements Serializable {
 		
 	}
 	
-	public Habitacion(int tipoHabitacion, String tematica, int numeroHab) {
+	public Habitacion(int tipoHabitacion, String tematica, int numeroHab, String uuid) {
 		this.tipoHabitacion= tipoHabitacion;
 		this.tematica= tematica;
 		this.numeroHab=numeroHab;
+		this.uuid = uuid;
 		
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+	
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 	public int getIdHabitacion() {
 		return idHabitacion;
 	}

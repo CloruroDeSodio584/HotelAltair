@@ -22,6 +22,8 @@ public interface TrabajadorDAO {
 	
 	Trabajador obtenerTrabajadorporId(int idTrabajador);
 	
+	Trabajador obtenerTrabajadorporUuid(String uuid);
+	
 	void ActualizarTrabajador(Trabajador trabajador);
 	
 }

@@ -14,6 +14,8 @@ public interface HabitacionDAO {
 	
 	Habitacion obtenerHabitacionPorId(int idHabitacion);
 	
+	Habitacion obtenerHabitacionPorUuid(String uuid);
+	
 	void actualizarHabitacion(Habitacion habitacionActualizar);
 	
 }

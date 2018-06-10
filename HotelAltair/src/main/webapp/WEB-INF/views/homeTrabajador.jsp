@@ -201,7 +201,7 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button value="${h.idHabitacion}"  onclick="location.href='reservaTrabajador?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar</button>
+                        <button value="${h.uuid}"  onclick="location.href='reservaTrabajador?uuid=${h.getUuid()}'" class="btn btn-info btn-sm">Reservar</button>
                     </div>
                 </div>
             </div>
@@ -226,7 +226,7 @@ h5 {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button value="${h.idHabitacion}"  onclick="location.href='reservaTrabajador?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar</button>
+                        <button value="${h.uuid}"  onclick="location.href='reservaTrabajador?uuid=${h.getUuid()}'" class="btn btn-info btn-sm">Reservar</button>
                     </div>
                 </div>
             </div>
@@ -248,7 +248,7 @@ h5 {
  Las Suites Cuentan con una mayor inmersión en la temática ademas de incluir con espectáculos relacionados                                  </div>
                     </div>
                     <div class="card-footer">
-                        <button value="${h.idHabitacion}" name="idhabitacion" onclick="location.href='reservaTrabajador?idHabitacion=${h.getIdHabitacion()}'" class="btn btn-info btn-sm">Reservar</button>
+                        <button value="${h.uuid}" name="uuid" onclick="location.href='reservaTrabajador?uuid=${h.getUuid()}'" class="btn btn-info btn-sm">Reservar</button>
                     </div>
                 </div>
             </div>

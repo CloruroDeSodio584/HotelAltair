@@ -26,6 +26,7 @@ public class Trabajador implements Serializable {
 	private String idioma;
 	private String correo;
 	private String password;
+	private String uuid;
 	
 	@OneToMany(mappedBy="trabajador", cascade=CascadeType.ALL)
 	public Set<Reserva> reservas = new HashSet<Reserva>();
@@ -34,7 +35,7 @@ public class Trabajador implements Serializable {
 		
 	}
 	
-	public Trabajador(String nombre, String apellidos, int tipoAcceso, int edad, String idioma, String correo, String password) {
+	public Trabajador(String nombre, String apellidos, int tipoAcceso, int edad, String idioma, String correo, String password,String uuid) {
 		
 		this.nombre= nombre;
 		this.apellidos= apellidos;
@@ -43,8 +44,17 @@ public class Trabajador implements Serializable {
 		this.idioma= idioma;
 		this.correo= correo;
 		this.password= password;
+		this.uuid= uuid;
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+	
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+	
 	public int getIdTrabajador() {
 		return idTrabajador;
 	}

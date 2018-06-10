@@ -86,19 +86,35 @@ public class ClienteDAOImplHibernate implements ClienteDAO {
 		
 		return client;
 	}
+	
+	@Transactional
+	@Override
+	public Cliente obtenerClienteporUuid(String uuid) {
+		Session sesion = sessionFactory.getCurrentSession();
+		
+		Cliente client = null;
+		
+		client = (Cliente) sesion.createQuery("FROM Cliente WHERE uuid=:c")
+				.setParameter("c", uuid)
+				.uniqueResult();
+		
+		
+		return client;
+	}
+	
 
 	@Transactional
 	@Override
 	public List<Cliente> listarClientes() {
 		Session sesion = sessionFactory.getCurrentSession();
-		return (List<Cliente>) sesion.createQuery("FROM Cliente").list();
+		return (List<Cliente>) sesion.createQuery("FROM Cliente where tipoAcceso = 1").list();
 	}
 
 	@Transactional
 	@Override
-	public void borrarCliente(int idCliente) {
+	public void borrarCliente(String uuid) {
 		Session sesion = sessionFactory.getCurrentSession();
-		sesion.delete(obtenerClienteporId(idCliente));
+		sesion.delete(obtenerClienteporUuid(uuid));
 
 	}
 

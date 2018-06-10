@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import javax.mail.MessagingException;
@@ -99,6 +100,9 @@ public class HomeController {
 		clienteLogin.setPassword(clienteDAO.encriptarContraseña(clienteLogin.getPassword()));
 		clienteLogin = clienteDAO.comprobarCliente(clienteLogin.getCorreo(), clienteLogin.getPassword());
 		
+		if(clienteLogin.getTipoAcceso() == 0)
+			return "redirect:/?mensaje=Revise su email para confirmacion de cuenta";
+		
 		if(clienteLogin != null) {
 			session.setAttribute("clienteLogin", clienteLogin);
 			System.out.println("Sesion iniciada con exito");
@@ -132,7 +136,10 @@ public class HomeController {
 		
 		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
 		
-		return new ModelAndView("registrar", "reg", new Cliente());
+		
+		
+		
+		return new ModelAndView("registrar", "reg", new Cliente(uuidAleatorio()));
 	}
 	
 	@RequestMapping(value="/anadirTrabajador", method = RequestMethod.GET )
@@ -177,10 +184,10 @@ public class HomeController {
 			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
 		}
 		
-		 int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+		 String uuid = request.getParameter("uuid");
 		
 		
-		model.addAttribute("clienteLogin", clienteDAO.obtenerClienteporId(idCliente));
+		model.addAttribute("clienteLogin", clienteDAO.obtenerClienteporUuid(uuid));
 		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
 		
 		return "modPerfil";
@@ -194,10 +201,10 @@ public class HomeController {
 			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
 		}
 		
-		 int idTrabajador = Integer.parseInt(request.getParameter("idTrabajador"));
+		 String uuid = request.getParameter("uuid");
 		
 		
-		model.addAttribute("trabajadorCambiar", trabajadorDAO.obtenerTrabajadorporId(idTrabajador));
+		model.addAttribute("trabajadorCambiar", trabajadorDAO.obtenerTrabajadorporUuid(uuid));
 		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
 		
 		return "modPerfilUsu";
@@ -213,8 +220,8 @@ public class HomeController {
 			return "redirect:/?mensaje=Debe iniciar Sesion para continuar";
 		}
 		
-		 int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
-		 Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorId(idHabitacion);
+		 String uuid =request.getParameter("uuid");
+		 Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorUuid(uuid);
 		 
 		 model.addAttribute("habitacion", habitacionReservar);
 		 model.addAttribute("clienteLogin", (Cliente)session.getAttribute("clienteLogin"));
@@ -380,6 +387,9 @@ public class HomeController {
 	public String registrarse(@ModelAttribute Cliente clienteLogin,@RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje, HttpSession session) {
 		boolean esTrabajador = false;
 	    
+		clienteLogin.setUuid(uuidAleatorio());
+		clienteLogin.setTipoAcceso(0);
+		
 		if(((Trabajador)session.getAttribute("trabajadorLogin")) != null)
 	    	esTrabajador = true;
 
@@ -399,10 +409,26 @@ public class HomeController {
 		}
 		
 		if(esTrabajador) {
-			return "redirect:/homeTrabajador?mensaje=Usuario Registrado";
+			
+			try {
+				enviarMail(clienteLogin);
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return "redirect:/homeTrabajador?mensaje=Esperando a confirmacion de cuenta";
 		}
-		else
-		return "redirect:/?mensaje=Usuario Registrado";
+		else{
+			try {
+				enviarMail(clienteLogin);
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return "redirect:/?mensaje=Revise su Email para confirmacion de cuenta";
+		}
+		
 		
 	}
 	
@@ -417,7 +443,7 @@ public class HomeController {
 		int tipoAcceso = Integer.parseInt(request.getParameter("tipoAcceso"));
 		String password =  request.getParameter("password");
 		
-		Trabajador nuevoTrabajador = new Trabajador(nombre, apellidos, tipoAcceso, edad, idioma, correo, password);
+		Trabajador nuevoTrabajador = new Trabajador(nombre, apellidos, tipoAcceso, edad, idioma, correo, password, uuidAleatorio());
 		
 		
 		if(trabajadorDAO.validarEmail(nuevoTrabajador)) {
@@ -495,11 +521,11 @@ public class HomeController {
 			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
 		}
 		
-		int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+		String uuid = request.getParameter("uuid");
 		
 		
 		
-		List<Reserva> reservasEliminar = reservaDAO.listarPorCliente(clienteDAO.obtenerClienteporId(idCliente));
+		List<Reserva> reservasEliminar = reservaDAO.listarPorCliente(clienteDAO.obtenerClienteporUuid(uuid));
 		
 		System.out.println("");
 		
@@ -511,7 +537,7 @@ public class HomeController {
 			
 		}
 		
-		clienteDAO.borrarCliente(idCliente);
+		clienteDAO.borrarCliente(uuid);
 
 		return "redirect:/datosClientes?mensaje=Cliente Borrado Correctamente";
 		
@@ -558,8 +584,8 @@ public class HomeController {
 		
 		 model.addAttribute("mensaje", mensaje);
 		
-		 int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
-		 Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorId(idHabitacion);
+		 String uuid = request.getParameter("uuid");
+		 Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorUuid(uuid);
 		 
 		 model.addAttribute("habitacion", habitacionReservar);
 		 model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
@@ -617,9 +643,9 @@ public class HomeController {
 		}
 		
 		
-		int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+		String uuid = request.getParameter("uuid");
 		
-		Cliente n = clienteDAO.obtenerClienteporId(idCliente);
+		Cliente n = clienteDAO.obtenerClienteporUuid(uuid);
 		
 		List<Reserva> listaRservas = reservaDAO.listarPorCliente(n);
 		
@@ -637,6 +663,20 @@ public class HomeController {
 		return ("misReservas");
 		
 	}
+	@RequestMapping(value = "/verificarEmail", method = RequestMethod.GET)
+	public String emailverificado(Model model, HttpServletRequest request ,HttpSession session) {
+	
+		String uuid = request.getParameter("uuid");
+		
+		Cliente cl = clienteDAO.obtenerClienteporUuid(uuid);
+		
+		cl.setTipoAcceso(1);
+		
+		clienteDAO.ActualizarCliente(cl);
+		
+		return "redirect:/?mensaje=Email verificado";
+	}
+	
 	
 	@RequestMapping(value = "/contabilidad", method = RequestMethod.GET)
 	public String contabilidad(Model model, HttpServletRequest request ,HttpSession session) {
@@ -661,15 +701,7 @@ public class HomeController {
 		
 		model.addAttribute("listaReservas", nReserva );
 		model.addAttribute("total", total);
-		
-		try {
-			enviarMail("adrianoc96@hotmail.com", "0 euros al mes", "http://localhost:8080/hotelAltair/?mensaje=Sesion%20Iniciada%20Con%20exito");
-		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+				
 		return ("contabilidad");
 		
 	}
@@ -688,9 +720,14 @@ public class HomeController {
 		
 		Cliente cliente = clienteDAO.obtenerClienteporCorreo(correoCliente);
 		
+
 		if(cliente == null) {
 			return "redirect:/homeTrabajador?mensaje=Correo de Cliente Erroneo";
-		}		
+		}	
+		
+		if(cliente.getTipoAcceso() == 0)
+			return "redirect:/homeTrabajador?mensaje=El cliente no ha verificado su cuenta aun";
+			
 		Trabajador trabajador = (Trabajador)session.getAttribute("trabajadorLogin");	
 		
 		int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
@@ -972,17 +1009,28 @@ public class HomeController {
 	}
 	
 	
-	private void enviarMail(String a, String desde, String texto) throws MessagingException {
+	private void enviarMail(Cliente c) throws MessagingException {
 		
 		MimeMessage message = mailsender.createMimeMessage();
 		
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
-		helper.setSubject(desde);
-		helper.setTo(a);
-		helper.setText(texto);
+		helper.setSubject("Verificacion Cuenta");
+		helper.setTo("adrianoc96@hotmail.com");
+		helper.setText("Hola buenas!\n Gracias por registrarse en Hotel Altair \n Para completar el registro solo tiene que pulsar en el siguiente enlace: http://localhost:8080/hotelAltair/verificarEmail?uuid="+c.getUuid());
 		
 		mailsender.send(message);
 		
+	}
+	
+	
+	private String uuidAleatorio() {
+		
+		String uui = UUID.randomUUID().toString();
+		
+		
+		
+		
+		return uui;
 	}
 	
 	

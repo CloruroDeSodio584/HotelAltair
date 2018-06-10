@@ -170,23 +170,23 @@ h5 {
 								<td>
 								
 								<c:if test="${tipoT.tipoAcceso == 1 && (tipoT.idTrabajador == r.idTrabajador) }">		
-								<button type="button" class="btn btn-warning" onclick="location.href='modPerfilTrabajadorUsu?idTrabajador=${r.idTrabajador}'">Modificar Trabajador</button>
+								<button type="button" class="btn btn-warning" onclick="location.href='modPerfilTrabajadorUsu?uuid=${r.uuid}'">Modificar Trabajador</button>
 									</c:if>
 					
 								<c:if test="${tipoT.tipoAcceso == 2 }">
 								
 								
-								<button type="button" class="btn btn-warning" onclick="location.href='modPerfilTrabajadorUsu?idTrabajador=${r.idTrabajador}'">Modificar Trabajador</button>
+								<button type="button" class="btn btn-warning" onclick="location.href='modPerfilTrabajadorUsu?uuid=${r.uuid}'">Modificar Trabajador</button>
 								<c:if test="${r.tipoAcceso != 0 }">
 									<button type="button" class="btn btn-primary"
-										data-toggle="modal" data-target="#eliminarTrabajador${r.idTrabajador }">
+										data-toggle="modal" data-target="#eliminarTrabajador${r.uuid }">
 										Dar de baja Trabajador</button> 
 										
 										
 										
 										
 										<!-- Modal -->
-									<div class="modal fade" id="eliminarTrabajador${r.idTrabajador }" tabindex="-1"
+									<div class="modal fade" id="eliminarTrabajador${r.uuid }" tabindex="-1"
 										role="dialog" aria-labelledby="exampleModalLabel"
 										aria-hidden="true">
 										<div class="modal-dialog" role="document">
@@ -203,7 +203,7 @@ h5 {
 												<div class="modal-footer">
 													<button type="button" class="btn btn-secondary"
 														data-dismiss="modal">No</button>
-													<button type="button" class="btn btn-primary" onclick="location.href='eliminarTrabajador?idTrabajador=${r.idTrabajador}'">Si
+													<button type="button" class="btn btn-primary" onclick="location.href='eliminarTrabajador?uuid=${r.uuid}'">Si
 														</button>
 												</div>
 											</div>

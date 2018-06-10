@@ -71,6 +71,15 @@ private SessionFactory sessionFactory;
 	
 	@Transactional
 	@Override
+	public Trabajador obtenerTrabajadorporUuid(String uuid) {
+		Session sesion = sessionFactory.getCurrentSession();
+		return (Trabajador) sesion.createQuery("FROM Trabajador where uuid=:c")
+				.setParameter("c", uuid)
+				.uniqueResult();
+	}
+	
+	@Transactional
+	@Override
 	public List<Trabajador> listarTrabajadoresAdmin() {
 		Session sesion = sessionFactory.getCurrentSession();
 		return (List<Trabajador>) sesion.createQuery("FROM Trabajador").list();

@@ -48,6 +48,15 @@ private SessionFactory sessionFactory;
 		Session sesion = sessionFactory.getCurrentSession();
 		return (Habitacion) sesion.get(Habitacion.class, idHabitacion);
 	}
+	
+	@Transactional
+	@Override
+	public Habitacion obtenerHabitacionPorUuid(String uuid) {
+		Session sesion = sessionFactory.getCurrentSession();
+		return (Habitacion) sesion.createQuery("From Habitacion WHERE uuid=:t")
+				.setParameter("t", uuid)
+				.uniqueResult();
+	}
 
 	@Transactional
 	@Override

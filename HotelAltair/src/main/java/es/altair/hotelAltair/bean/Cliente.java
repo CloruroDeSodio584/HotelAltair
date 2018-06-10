@@ -25,6 +25,8 @@ public class Cliente implements Serializable {
 	private int edad;
 	private String correo;
 	private String password;
+	private String uuid;
+	private int tipoAcceso;
 	
 	@OneToMany(mappedBy="cliente", cascade=CascadeType.ALL)
 	public Set<Reserva> reservas = new HashSet<Reserva>();
@@ -33,7 +35,11 @@ public class Cliente implements Serializable {
 		
 	}
 	
-	public Cliente(String nombre, String apellidos, int edad, String correo, String password) {
+	public Cliente(String uuid) {
+		this.uuid = uuid;
+	}
+	
+	public Cliente(String nombre, String apellidos, int edad, String correo, String password,String uuid, int tipoAcceso) {
 		super();
 		
 		this.nombre= nombre;
@@ -41,7 +47,25 @@ public class Cliente implements Serializable {
 		this.edad= edad;
 		this.correo= correo;
 		this.password= password;
+		this.uuid = uuid;
+		this.tipoAcceso = tipoAcceso;
 		
+	}
+	
+	public int getTipoAcceso() {
+		return tipoAcceso;
+	}
+	
+	public void setTipoAcceso(int tipoAcceso) {
+		this.tipoAcceso = tipoAcceso;
+	}
+	
+	public String getUuid() {
+		return uuid;
+	}
+	
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public int getIdCliente() {

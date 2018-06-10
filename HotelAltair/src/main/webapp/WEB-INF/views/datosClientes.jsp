@@ -166,15 +166,15 @@ h5 {
 								<td>
 
 									<button type="button" class="btn btn-primary"
-										data-toggle="modal" data-target="#eliminarCliente${r.idCliente }">
+										data-toggle="modal" data-target="#eliminarCliente${r.uuid }">
 										Eliminar Cliente</button> 
 										
-										<button type="button" class="btn btn-warning" onclick="location.href='reservasCliente?idCliente=${r.idCliente}'">Ver Reservas</button>
+										<button type="button" class="btn btn-warning" onclick="location.href='reservasCliente?uuid=${r.uuid}'">Ver Reservas</button>
 										
-										<button type="button" class="btn btn-warning" onclick="location.href='modPerfilTrabajador?idCliente=${r.idCliente}'">Modificar Cliente</button>
+										<button type="button" class="btn btn-warning" onclick="location.href='modPerfilTrabajador?uuid=${r.uuid}'">Modificar Cliente</button>
 										
 										<!-- Modal -->
-									<div class="modal fade" id="eliminarCliente${r.idCliente }" tabindex="-1"
+									<div class="modal fade" id="eliminarCliente${r.uuid }" tabindex="-1"
 										role="dialog" aria-labelledby="exampleModalLabel"
 										aria-hidden="true">
 										<div class="modal-dialog" role="document">
@@ -191,7 +191,7 @@ h5 {
 												<div class="modal-footer">
 													<button type="button" class="btn btn-secondary"
 														data-dismiss="modal">No</button>
-													<button type="button" class="btn btn-primary" onclick="location.href='eliminarCliente?idCliente=${r.idCliente}'">Si
+													<button type="button" class="btn btn-primary" onclick="location.href='eliminarCliente?uuid=${r.uuid}'">Si
 														</button>
 												</div>
 											</div>

@@ -14,9 +14,11 @@ public interface ClienteDAO {
 	
 	List<Cliente> listarClientes();
 	
-	void borrarCliente(int idCliente);
+	void borrarCliente(String uuid);
 	
 	Cliente obtenerClienteporId(int idCliente);
+	
+	Cliente obtenerClienteporUuid(String uuid);
 	
 	Cliente obtenerClienteporCorreo(String correo);
 	
