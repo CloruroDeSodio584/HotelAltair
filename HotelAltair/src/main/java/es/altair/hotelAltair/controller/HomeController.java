@@ -1050,6 +1050,7 @@ public class HomeController {
 		MimeMessage message = mailsender.createMimeMessage();
 		
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
+		
 		helper.setSubject("Verificacion Cuenta");
 		helper.setTo("adrianoc96@hotmail.com");
 		helper.setText("Hola buenas!\n Gracias por registrarse en Hotel Altair \n Para completar el registro solo tiene que pulsar en el siguiente enlace: http://localhost:8080/hotelAltair/verificarEmail?uuid="+c.getUuid() + "\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
@@ -1092,9 +1093,6 @@ public class HomeController {
 	private String uuidAleatorio() {
 		
 		String uui = UUID.randomUUID().toString();
-		
-		
-		
 		
 		return uui;
 	}
