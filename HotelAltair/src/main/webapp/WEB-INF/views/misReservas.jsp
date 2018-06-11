@@ -134,9 +134,8 @@ h5 {
 						src="<c:url value="/resources/images/pecine.jpg" />"
 						alt="First slide">
 					<div class="carousel-caption d-none d-md-block">
-						<h5>Comedor Principal</h5>
-						<p>Disfruta de la gastronomía de nuestros mejores chef siempre
-							acompañada de nuestro show de Jazz</p>
+						<h5>Sotano Cueva</h5>
+						<p>Un largo camino que conecta nuestras instalaciones</p>
 					</div>
 				</div>
 
@@ -145,8 +144,8 @@ h5 {
 						src="<c:url value="/resources/images/anden.jpg" />"
 						alt="Second slide">
 					<div class="carousel-caption d-none d-md-block">
-						<h5>Patio de Zeus</h5>
-						<p>Un lugar perfecto para relajarse con estética griega</p>
+						<h5>Proxima apertura</h5>
+						<p>Proximamente nueva apertura en China</p>
 					</div>
 				</div>
 			</div>
@@ -181,6 +180,7 @@ h5 {
 						<th class="">Tipo Pago</th>
 						<c:if test="${!empty trabajadorLogin }">
 						<th class="">Trabajador Reserva</th>
+						<th class="">uuid</th>
 						</c:if>
 
 					</tr>
@@ -196,9 +196,7 @@ h5 {
 							<td>${r.tipoPago }</td>
 							<c:if test="${!empty trabajadorLogin }">
 							<td>${r.getTrabajador().getNombre() } ${r.getTrabajador().getApellidos() }</td>
-							<td>	
-							
-							</td>
+							<td>${r.uuid}</td>
 							</c:if>
 
 
@@ -230,7 +228,7 @@ h5 {
 											<div class="modal-footer">
 												<button style="color: black;" type="button" class="btn btn-secondary"
 													data-dismiss="modal">No</button>
-												<button style="color: black;" type="button" class="btn btn-primary" onclick="location.href='cancelarReserva?idReserva=${r.idReserva}'">Si
+												<button style="color: black;" type="button" class="btn btn-primary" onclick="location.href='cancelarReserva?idReserva=${r.uuid}&idCliente=${r.getCliente().getUuid()}'">Si
 													</button>
 											</div>
 										</div>

@@ -13,6 +13,7 @@ public interface ReservaDAO {
 	void insertarReserva(Reserva reserva);
 	void borrarReserva(int idReserva);
 	Reserva obtenerReservaPorId(int idReserva);
+	Reserva obtenerReservaPorUuid(String uuid);
     List<Reserva> listarReservaPorTipoHabitacion(int tipoHabitacion);
 	void actualizarReserva(Reserva reserva);
 	

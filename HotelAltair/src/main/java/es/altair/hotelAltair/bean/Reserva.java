@@ -40,13 +40,15 @@ public class Reserva implements Serializable {
 	double precioAPagar;
 
 	String tipoPago;
+	
+	private String uuid;
 
 	public Reserva() {
 
 	}
 
 	public Reserva(Cliente cliente, Trabajador trabajador, Habitacion habitacion, String fechaEntrada, String fechaSalida,
-			 double precioAPagar, String tipoPago) {
+			 double precioAPagar, String tipoPago, String uuid) {
 
 		this.cliente = cliente;
 		this.trabajador = trabajador;
@@ -56,8 +58,17 @@ public class Reserva implements Serializable {
 		
 		this.precioAPagar = precioAPagar;
 		this.tipoPago = tipoPago;
+		this.uuid = uuid;
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+	
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+	
 	public int getIdReserva() {
 		return idReserva;
 	}

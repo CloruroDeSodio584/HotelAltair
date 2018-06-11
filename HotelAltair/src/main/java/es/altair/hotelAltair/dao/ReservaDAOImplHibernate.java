@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import es.altair.hotelAltair.bean.Cliente;
 import es.altair.hotelAltair.bean.Habitacion;
 import es.altair.hotelAltair.bean.Reserva;
+import es.altair.hotelAltair.bean.Trabajador;
 
 public class ReservaDAOImplHibernate implements ReservaDAO {
 
@@ -65,6 +66,15 @@ private SessionFactory sessionFactory;
 		Session sesion = sessionFactory.getCurrentSession();
 		sesion.update(reserva);
 
+	}
+	
+	@Transactional
+	@Override
+	public Reserva obtenerReservaPorUuid(String uuid) {
+		Session sesion = sessionFactory.getCurrentSession();
+		return (Reserva) sesion.createQuery("FROM Reserva where uuid=:c")
+				.setParameter("c", uuid)
+				.uniqueResult();
 	}
 	
 

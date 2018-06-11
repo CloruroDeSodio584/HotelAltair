@@ -265,7 +265,9 @@ h5 {
 	
 	<footer style="background-color: #1C1C1C" class="page-footer font-small blue pt-4 mt-4">
   <!-- Copyright -->
-  <div class="footer-copyright text-center py-3" style="color: yellow;">© 2018 Copyright:
+  <div class="footer-copyright text-center py-3" style="color: yellow;">
+  <p>Todas las salidas del hotel se harán a las 11:00 am y las entradas se harán a las 12:00 am. Todo Aquel que no entregue el correo de reserva a su entrada NO PODRÁ HOSPEDARSE </p>
+  © 2018 Copyright:
     <a href="" > hotelAltair Company</a>
   </div>
 

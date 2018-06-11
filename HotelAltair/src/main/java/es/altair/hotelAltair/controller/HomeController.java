@@ -243,12 +243,14 @@ public class HomeController {
 		
 		String tipoPago =request.getParameter("tipoPago");
 		
+		
+		
 		//INICIO COMPROBACIONES DE FECHA
 		
 		boolean fechaCorrecta = compruebaFechas(fechaEntrada, fechaSalida);
 		
 		if(!compruebaFechas(fechaEntrada, fechaSalida)) {
-			return "redirect:/?mensaje=Fecha de Salida Incorrecta vuelva a intentarlo";
+			return "redirect:/?mensaje=Fecha Introducida Incorrecta vuelva a intentarlo";
 		}
 		
 		if (!comrpuebaHabitacionLibre(fechaEntrada, fechaSalida, habitacionReservar.getIdHabitacion(), habitacionReservar.getNumeroHab())) {
@@ -262,12 +264,19 @@ public class HomeController {
 		
 		
 		
-		Reserva nuevaReserva = new Reserva(n, null ,habitacionReservar, fechaEntrada, fechaSalida, precioApagar, tipoPago);
+		Reserva nuevaReserva = new Reserva(n, null ,habitacionReservar, fechaEntrada, fechaSalida, precioApagar, tipoPago, uuidAleatorio());
 		
 		reservaDAO.insertarReserva(nuevaReserva);
 		
+		try {
+			enviarMailReserva(n, nuevaReserva);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		return "redirect:/?mensaje=Reserva Realizada Con exito";
+		
+		return "redirect:/?mensaje=Reserva Realizada Con exito, no olvide revisar el correo";
 	}
 	
 	@RequestMapping(value="/actualizarPerfil", method = RequestMethod.POST)
@@ -371,10 +380,23 @@ public class HomeController {
 	@RequestMapping(value="/cancelarReserva", method = RequestMethod.GET)
 	public String cancelarReserva(Model model, HttpServletRequest request, HttpSession session) {
 		
-		int idReserva = Integer.parseInt(request.getParameter("idReserva"));
+		String idReserva = request.getParameter("idReserva");
+		String idCliente = request.getParameter("idCliente");
 		
-		reservaDAO.borrarReserva(idReserva);
+		System.out.println();
+		
+		Reserva nReserva = reservaDAO.obtenerReservaPorUuid(idReserva);
+		
+		reservaDAO.borrarReserva(nReserva.getIdReserva());
 			
+		try {
+			enviarMailCancelarReserva(clienteDAO.obtenerClienteporUuid(idCliente), nReserva );
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		if(((Trabajador)session.getAttribute("trabajadorLogin")) != null)
 			return "redirect:/datosClientes?mensaje=Reserva Borrada Correctamente";
@@ -756,12 +778,20 @@ public class HomeController {
 		
 		
 		
-		Reserva nuevaReserva = new Reserva(cliente, trabajador, habitacionReservar, fechaEntrada, fechaSalida, precioApagar, tipoPago);
+		Reserva nuevaReserva = new Reserva(cliente, trabajador, habitacionReservar, fechaEntrada, fechaSalida, precioApagar, tipoPago, uuidAleatorio());
 		
 		reservaDAO.insertarReserva(nuevaReserva);
 		
+		try {
+			enviarMailReserva(cliente, nuevaReserva);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		return "redirect:/homeTrabajador?mensaje=Reserva Realizada Con exito";
+		
+		
+		return "redirect:/homeTrabajador?mensaje=Reserva Realizada Con exito, no olvide revisar el correo";
 	}
 	
 	
@@ -865,6 +895,12 @@ public class HomeController {
 		
 		Date fechaEntradaDate = convertirStringaDate(fechaEntrada);
 		Date fechaSalidaDate = convertirStringaDate(fechaSalida);
+		
+		Date dateobj = new Date();
+		dateobj = convertirStringaDate(formatoDelTexto.format(dateobj));
+		
+		if(fechaSalidaDate.before(dateobj) || fechaEntradaDate.before(dateobj))
+			fechaCorrecta = false;
 		
 		
 		if(fechaSalidaDate.before(fechaEntradaDate) | fechaSalidaDate.equals(fechaEntradaDate))
@@ -1016,11 +1052,41 @@ public class HomeController {
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 		helper.setSubject("Verificacion Cuenta");
 		helper.setTo("adrianoc96@hotmail.com");
-		helper.setText("Hola buenas!\n Gracias por registrarse en Hotel Altair \n Para completar el registro solo tiene que pulsar en el siguiente enlace: http://localhost:8080/hotelAltair/verificarEmail?uuid="+c.getUuid());
+		helper.setText("Hola buenas!\n Gracias por registrarse en Hotel Altair \n Para completar el registro solo tiene que pulsar en el siguiente enlace: http://localhost:8080/hotelAltair/verificarEmail?uuid="+c.getUuid() + "\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
 		
 		mailsender.send(message);
 		
 	}
+	
+	private void enviarMailReserva(Cliente c, Reserva r) throws MessagingException {
+		
+		MimeMessage message = mailsender.createMimeMessage();
+		
+		MimeMessageHelper helper = new MimeMessageHelper(message, true);
+		helper.setSubject("Reserva hotel Altair");
+		helper.setTo("adrianoc96@hotmail.com");
+		helper.setText("Hola buenas!\n Entregue lo siguiente en recepcion a su llegada al hotel como resguardo de la reserva. Recuerde que sin él no se le garantiza su hospedaje:\nEUWar: " + r.getUuid() + "\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
+		
+		
+		mailsender.send(message);
+		
+	}
+	
+	private void enviarMailCancelarReserva(Cliente c, Reserva r) throws MessagingException {
+		
+		MimeMessage message = mailsender.createMimeMessage();
+		
+		MimeMessageHelper helper = new MimeMessageHelper(message, true);
+		helper.setSubject("Cancelacion Reserva hotel Altair");
+		helper.setTo("adrianoc96@hotmail.com");
+		helper.setText("Hola buenas!\n Su reserva con los siguientes datos ha sido cancelada\n Fecha Entrada: " + r.getFechaEntrada() +" \n Fecha Salida: " + r.getFechaSalida()  +"\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
+		
+		
+		mailsender.send(message);
+		
+	}
+	
+	
 	
 	
 	private String uuidAleatorio() {
