@@ -95,11 +95,13 @@ public class HomeController {
 	    	return "redirect:/?mensaje=Debe cerrar sesion como Trabajador";
 		
 		
-		
 		model.addAttribute("listarH", habitacionDAO.listarHabitaciones());
 		clienteLogin.setPassword(clienteDAO.encriptarContraseña(clienteLogin.getPassword()));
 		clienteLogin = clienteDAO.comprobarCliente(clienteLogin.getCorreo(), clienteLogin.getPassword());
 		
+		if(clienteLogin == null) {
+			return "redirect:/?mensaje=Error en email o Password Incorrecto";
+		}	
 		if(clienteLogin.getTipoAcceso() == 0)
 			return "redirect:/?mensaje=Revise su email para confirmacion de cuenta";
 		
@@ -108,7 +110,7 @@ public class HomeController {
 			System.out.println("Sesion iniciada con exito");
 			return "redirect:/?mensaje=Sesion Iniciada Con exito";
 		}
-		System.out.println("Sesion no Iniciada");
+		
 		return "redirect:/?mensaje=Error en email o Password Incorrecto";
 		
 	}
@@ -482,209 +484,9 @@ public class HomeController {
 	
 	// HOME TRABAJADOR
 	
-	@RequestMapping(value = "/loginTrabajador", method = RequestMethod.GET)
-	public ModelAndView loginTrabajador(Model model,HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
-		
-		model.addAttribute("mensaje", mensaje);
-		
-		
-		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
-		
-		return new ModelAndView("loginTrabajador", "tra", new Trabajador());
-	}
 	
 	
-	@RequestMapping(value = "/entrarTrabajador", method = RequestMethod.POST)
-	public String entrarTrabajador(@ModelAttribute Trabajador trabajadorLogin, Model model, HttpSession session) {
-		
-		
-		if(((Cliente)session.getAttribute("clienteLogin")) != null)
-	    	return "redirect:/loginTrabajador?mensaje=Debe cerrar sesion como Cliente para continuar";
-		
-		//HASTA QUE EL ADMINISTRADOR NO PUEDA CREAR TRABAJADORES
-		trabajadorLogin.setPassword(clienteDAO.encriptarContraseña(trabajadorLogin.getPassword()));
-		trabajadorLogin = trabajadorDAO.comprobarTrabajador(trabajadorLogin.getCorreo(), trabajadorLogin.getPassword());
-		
-		if(trabajadorLogin != null) {
-			if(trabajadorLogin.getTipoAcceso() == 0)
-				return "redirect:/loginTrabajador?mensaje=Trabajador dado de baja";
-			
-			
-			session.setAttribute("trabajadorLogin", trabajadorLogin);
-			
-			return "redirect:/homeTrabajador?mensaje=Sesion Iniciada Con exito";
-		}
-		System.out.println("Sesion no Iniciada");
-		return "redirect:/loginTrabajador?mensaje=Error en email o Password Incorrecto";
-		
-	}
-	@RequestMapping(value = "/homeTrabajador", method = RequestMethod.GET)
-	public String homeTrabajador(Model model,HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
-		
-		if(noLogueadoTrabajador(session)) {
-			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
-		}
-		
-		model.addAttribute("mensaje", mensaje);
-		model.addAttribute("listarH", habitacionDAO.listarHabitaciones());
-		
-		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
-		
-		return "homeTrabajador";
-	}
 	
-	@RequestMapping(value = "/eliminarCliente", method = RequestMethod.GET)
-	public String eliminarCliente(Model model, HttpSession session, HttpServletRequest request) {
-		
-		
-		if(noLogueadoTrabajador(session)) {
-			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
-		}
-		
-		String uuid = request.getParameter("uuid");
-		
-		
-		
-		List<Reserva> reservasEliminar = reservaDAO.listarPorCliente(clienteDAO.obtenerClienteporUuid(uuid));
-		
-		System.out.println("");
-		
-		if(reservasEliminar != null) {
-			
-			for (Reserva reserva : reservasEliminar) {
-				reservaDAO.borrarReserva(reserva.getIdReserva());
-			}
-			
-		}
-		
-		clienteDAO.borrarCliente(uuid);
-
-		return "redirect:/datosClientes?mensaje=Cliente Borrado Correctamente";
-		
-	}
-	
-	@RequestMapping(value = "/eliminarTrabajador", method = RequestMethod.GET)
-	public String eliminarTrabajador(Model model, HttpSession session, HttpServletRequest request) {
-		
-		
-		if(noLogueadoTrabajador(session)) {
-			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
-		}
-		
-		int idTrabajador = Integer.parseInt(request.getParameter("idTrabajador"));
-		
-		Trabajador tra = trabajadorDAO.obtenerTrabajadorporId(idTrabajador);
-		
-		if(tra.getTipoAcceso() == 2 && trabajadorDAO.listarAdministradores().size() == 1) {
-			return "redirect:/datosTrabajadores?mensaje=**Error** Debe al menos haber un administrador";
-		}
-		
-		
-		
-		tra.setTipoAcceso(0);
-		
-		
-		trabajadorDAO.ActualizarTrabajador(tra);
-
-
-		return "redirect:/datosTrabajadores?mensaje=Trabajador dado de baja Correctamente";
-		
-	}
-	
-	
-	@RequestMapping(value="/reservaTrabajador", method = RequestMethod.GET)
-	public String reservaTrabajador(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
-		
-		
-		if(noLogueadoTrabajador(session)) {
-			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
-		}
-		
-		 model.addAttribute("mensaje", mensaje);
-		
-		 String uuid = request.getParameter("uuid");
-		 Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorUuid(uuid);
-		 
-		 model.addAttribute("habitacion", habitacionReservar);
-		 model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
-		
-		return "reservaTrabajador";
-	}
-	
-	@RequestMapping(value="/datosClientes", method = RequestMethod.GET)
-	public String datosClientes(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
-		
-		
-		if(noLogueadoTrabajador(session)) {
-			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
-		}
-		
-		model.addAttribute("mensaje", mensaje);
-		model.addAttribute("listaClientes", clienteDAO.listarClientes());
-		model.addAttribute("listaReservas", reservaDAO.listarTodos());
-		
-		
-		return "datosClientes";
-	}
-	
-	@RequestMapping(value="/datosTrabajadores", method = RequestMethod.GET)
-	public String datosTrabajadores(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
-		
-		
-		if(noLogueadoTrabajador(session)) {
-			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
-		}
-		
-		model.addAttribute("mensaje", mensaje);
-		
-		Trabajador trabajadorLogin = (Trabajador)session.getAttribute("trabajadorLogin");
-		
-		if(trabajadorLogin.getTipoAcceso() == 2)
-			model.addAttribute("listaTrabajadores", trabajadorDAO.listarTrabajadoresAdmin());
-		else
-		model.addAttribute("listaTrabajadores", trabajadorDAO.listarTrabajadores());
-		
-		model.addAttribute("tipoT", trabajadorLogin);
-		
-		
-		return "datosTrabajadores";
-	}
-	
-	@RequestMapping(value = "/reservasCliente", method = RequestMethod.GET)
-	public String reservasCliente(Model model, HttpServletRequest request ,HttpSession session) {
-		
-		if(noLogueadoTrabajador(session)) {
-			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
-		}
-		
-		
-		String uuid = request.getParameter("uuid");
-		
-		Cliente n = clienteDAO.obtenerClienteporUuid(uuid);
-		
-		List<Reserva> listaRservas = reservaDAO.listarPorCliente(n);
-		
-		System.out.println("");
-		
-		if(listaRservas.size() == 0 )
-			return "redirect:/datosClientes?mensaje=El cliente no tiene ninguna reserva";
-		
-		model.addAttribute("listarR", listaRservas);
-		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
-		
-		
-		
-		
-		return ("misReservas");
-		
-	}
 	@RequestMapping(value = "/verificarEmail", method = RequestMethod.GET)
 	public String emailverificado(Model model, HttpServletRequest request ,HttpSession session) {
 	
@@ -700,99 +502,7 @@ public class HomeController {
 	}
 	
 	
-	@RequestMapping(value = "/contabilidad", method = RequestMethod.GET)
-	public String contabilidad(Model model, HttpServletRequest request ,HttpSession session) {
-		
-		if(noLogueadoTrabajador(session)) {
-			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
-		}
-		
-		Trabajador trabajador = (Trabajador)session.getAttribute("trabajadorLogin");
-		
-		if(trabajador.getTipoAcceso() != 2)
-		 return "redirect:/homeTrabajador?mensaje=No tiene el tipo de autorizacion para entrar aqui";
-		
-		List<Reserva> nReserva = reservaDAO.listarTodos();
-		
-		double total = 0;
-		
-		for (Reserva reserva : nReserva) {
-			total = total + reserva.getPrecioAPagar();
-		}
-		
-		model.addAttribute("listaReservas", nReserva );
-		model.addAttribute("total", total);
-				
-		return ("contabilidad");
-		
-	}
 	
-	
-	@RequestMapping(value="/confirmarReservaTrabajador", method = RequestMethod.POST)
-	public String confirmarReservaTrabajador(Model model, HttpServletRequest request, HttpSession session) {
-
-		
-		
-		if(noLogueadoTrabajador(session)) {
-			model.addAttribute("errorLogin","Inicie sesión para entrar");
-			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
-		}
-		String correoCliente = request.getParameter("correo");
-		
-		Cliente cliente = clienteDAO.obtenerClienteporCorreo(correoCliente);
-		
-
-		if(cliente == null) {
-			return "redirect:/homeTrabajador?mensaje=Correo de Cliente Erroneo";
-		}	
-		
-		if(cliente.getTipoAcceso() == 0)
-			return "redirect:/homeTrabajador?mensaje=El cliente no ha verificado su cuenta aun";
-			
-		Trabajador trabajador = (Trabajador)session.getAttribute("trabajadorLogin");	
-		
-		int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
-		Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorId(idHabitacion);
-		String fechaEntrada = request.getParameter("fechaEntrada");
-		String fechaSalida =  request.getParameter("fechaSalida");
-		
-		String tipoPago =request.getParameter("tipoPago");
-		
-		//INICIO COMPROBACIONES DE FECHA
-		
-		boolean fechaCorrecta = compruebaFechas(fechaEntrada, fechaSalida);
-		
-		if(!compruebaFechas(fechaEntrada, fechaSalida)) {
-			return "redirect:/homeTrabajador?mensaje=Fecha de Salida Incorrecta vuelva a intentarlo";
-		}
-		
-		if (!comrpuebaHabitacionLibre(fechaEntrada, fechaSalida, habitacionReservar.getIdHabitacion(), habitacionReservar.getNumeroHab())) {
-			 return "redirect:/homeTrabajador?mensaje=Todas las habitaciones estan ocupadas por al menos un dia en concreto, vuelva a intentarlo";
-		}
-		
-		
-		//FIN COMPROBACIONES DE FECHA
-		
-		double precioApagar = precioFecha(fechaEntrada, fechaSalida ,habitacionReservar.getTipoHabitacion());
-		
-		
-		
-		Reserva nuevaReserva = new Reserva(cliente, trabajador, habitacionReservar, fechaEntrada, fechaSalida, precioApagar, tipoPago, uuidAleatorio());
-		
-		reservaDAO.insertarReserva(nuevaReserva);
-		
-		try {
-			enviarMailReserva(cliente, nuevaReserva);
-		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		
-		return "redirect:/homeTrabajador?mensaje=Reserva Realizada Con exito, no olvide revisar el correo";
-	}
 	
 	
 	
@@ -1052,8 +762,8 @@ public class HomeController {
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 		
 		helper.setSubject("Verificacion Cuenta");
-		helper.setTo("adrianoc96@hotmail.com");
-		helper.setText("Hola buenas!\n Gracias por registrarse en Hotel Altair \n Para completar el registro solo tiene que pulsar en el siguiente enlace: http://localhost:8080/hotelAltair/verificarEmail?uuid="+c.getUuid() + "\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
+		helper.setTo(c.getCorreo());
+		helper.setText("Hola buenas!\n Gracias por registrarse en Hotel Altair \n Para completar el registro solo tiene que pulsar en el siguiente enlace: http://hotelaltairproyecto.com/HotelAltair/verificarEmail?uuid="+c.getUuid() + "\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
 		
 		mailsender.send(message);
 		
@@ -1065,8 +775,8 @@ public class HomeController {
 		
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 		helper.setSubject("Reserva hotel Altair");
-		helper.setTo("adrianoc96@hotmail.com");
-		helper.setText("Hola buenas!\n Entregue lo siguiente en recepcion a su llegada al hotel como resguardo de la reserva. Recuerde que sin él no se le garantiza su hospedaje:\nEUWar: " + r.getUuid() + "\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
+		helper.setTo(c.getCorreo());
+		helper.setText("Hola buenas!\n Entregue lo siguiente en recepcion a su llegada al hotel como resguardo de la reserva. Recuerde que sin él no se le garantiza su hospedaje:\nEUWar: " + r.getUuid() +"\n Precio total: " + r.getPrecioAPagar() + " Euros" + "\nFecha Entrada: " + r.getFechaEntrada() +" \n Fecha Salida: " + r.getFechaSalida()  +"\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
 		
 		
 		mailsender.send(message);
@@ -1079,8 +789,8 @@ public class HomeController {
 		
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 		helper.setSubject("Cancelacion Reserva hotel Altair");
-		helper.setTo("adrianoc96@hotmail.com");
-		helper.setText("Hola buenas!\n Su reserva con los siguientes datos ha sido cancelada\n Fecha Entrada: " + r.getFechaEntrada() +" \n Fecha Salida: " + r.getFechaSalida()  +"\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
+		helper.setTo(c.getCorreo());
+		helper.setText("Hola buenas!\n Su reserva con los siguientes datos ha sido cancelada\n Fecha Entrada: " + r.getFechaEntrada() +" \n Fecha Salida: " + r.getFechaSalida() + "\n Precio Total: " + r.getPrecioAPagar() + " Euros"  +"\n\n  Recuerde leer nuestras condiciones al pie de la pagina de Inicio");
 		
 		
 		mailsender.send(message);
@@ -1096,6 +806,308 @@ public class HomeController {
 		
 		return uui;
 	}
+	
+	
+	/*@RequestMapping(value = "/loginTrabajador", method = RequestMethod.GET)
+	public ModelAndView loginTrabajador(Model model,HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		model.addAttribute("mensaje", mensaje);
+		
+		
+		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
+		
+		return new ModelAndView("loginTrabajador", "tra", new Trabajador());
+	}*/
+	
+	
+	/*@RequestMapping(value = "/entrarTrabajador", method = RequestMethod.POST)
+	public String entrarTrabajador(@ModelAttribute Trabajador trabajadorLogin, Model model, HttpSession session) {
+		
+		
+		if(((Cliente)session.getAttribute("clienteLogin")) != null)
+	    	return "redirect:/loginTrabajador?mensaje=Debe cerrar sesion como Cliente para continuar";
+		
+		//HASTA QUE EL ADMINISTRADOR NO PUEDA CREAR TRABAJADORES
+		trabajadorLogin.setPassword(clienteDAO.encriptarContraseña(trabajadorLogin.getPassword()));
+		trabajadorLogin = trabajadorDAO.comprobarTrabajador(trabajadorLogin.getCorreo(), trabajadorLogin.getPassword());
+		
+		if(trabajadorLogin != null) {
+			if(trabajadorLogin.getTipoAcceso() == 0)
+				return "redirect:/loginTrabajador?mensaje=Trabajador dado de baja";
+			
+			
+			session.setAttribute("trabajadorLogin", trabajadorLogin);
+			
+			return "redirect:/homeTrabajador?mensaje=Sesion Iniciada Con exito";
+		}
+		System.out.println("Sesion no Iniciada");
+		return "redirect:/loginTrabajador?mensaje=Error en email o Password Incorrecto";
+		
+	}*/
+	
+	/*
+	@RequestMapping(value = "/homeTrabajador", method = RequestMethod.GET)
+	public String homeTrabajador(Model model,HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		model.addAttribute("mensaje", mensaje);
+		model.addAttribute("listarH", habitacionDAO.listarHabitaciones());
+		
+		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
+		
+		return "homeTrabajador";
+	} */
+	
+/*	@RequestMapping(value = "/eliminarCliente", method = RequestMethod.GET)
+	public String eliminarCliente(Model model, HttpSession session, HttpServletRequest request) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		String uuid = request.getParameter("uuid");
+		
+		
+		
+		List<Reserva> reservasEliminar = reservaDAO.listarPorCliente(clienteDAO.obtenerClienteporUuid(uuid));
+		
+		System.out.println("");
+		
+		if(reservasEliminar != null) {
+			
+			for (Reserva reserva : reservasEliminar) {
+				reservaDAO.borrarReserva(reserva.getIdReserva());
+			}
+			
+		}
+		
+		clienteDAO.borrarCliente(uuid);
+
+		return "redirect:/datosClientes?mensaje=Cliente Borrado Correctamente";
+		
+	}*/
+	/*
+	@RequestMapping(value = "/eliminarTrabajador", method = RequestMethod.GET)
+	public String eliminarTrabajador(Model model, HttpSession session, HttpServletRequest request) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		int idTrabajador = Integer.parseInt(request.getParameter("idTrabajador"));
+		
+		Trabajador tra = trabajadorDAO.obtenerTrabajadorporId(idTrabajador);
+		
+		if(tra.getTipoAcceso() == 2 && trabajadorDAO.listarAdministradores().size() == 1) {
+			return "redirect:/datosTrabajadores?mensaje=**Error** Debe al menos haber un administrador";
+		}
+		
+		
+		
+		tra.setTipoAcceso(0);
+		
+		
+		trabajadorDAO.ActualizarTrabajador(tra);
+
+
+		return "redirect:/datosTrabajadores?mensaje=Trabajador dado de baja Correctamente";
+		
+	}*/
+	
+	/*
+	@RequestMapping(value="/reservaTrabajador", method = RequestMethod.GET)
+	public String reservaTrabajador(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		 model.addAttribute("mensaje", mensaje);
+		
+		 String uuid = request.getParameter("uuid");
+		 Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorUuid(uuid);
+		 
+		 model.addAttribute("habitacion", habitacionReservar);
+		 model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
+		
+		return "reservaTrabajador";
+	} */
+	
+	/*@RequestMapping(value="/datosClientes", method = RequestMethod.GET)
+	public String datosClientes(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		model.addAttribute("mensaje", mensaje);
+		model.addAttribute("listaClientes", clienteDAO.listarClientes());
+		model.addAttribute("listaReservas", reservaDAO.listarTodos());
+		
+		
+		return "datosClientes";
+	}*/
+	
+	/*@RequestMapping(value="/datosTrabajadores", method = RequestMethod.GET)
+	public String datosTrabajadores(Model model, HttpServletRequest request, HttpSession session, @RequestParam(value = "mensaje", required= false, defaultValue="") String mensaje) {
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		model.addAttribute("mensaje", mensaje);
+		
+		Trabajador trabajadorLogin = (Trabajador)session.getAttribute("trabajadorLogin");
+		
+		if(trabajadorLogin.getTipoAcceso() == 2)
+			model.addAttribute("listaTrabajadores", trabajadorDAO.listarTrabajadoresAdmin());
+		else
+		model.addAttribute("listaTrabajadores", trabajadorDAO.listarTrabajadores());
+		
+		model.addAttribute("tipoT", trabajadorLogin);
+		
+		
+		return "datosTrabajadores";
+	} */
+	
+	/*@RequestMapping(value = "/reservasCliente", method = RequestMethod.GET)
+	public String reservasCliente(Model model, HttpServletRequest request ,HttpSession session) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		
+		String uuid = request.getParameter("uuid");
+		
+		Cliente n = clienteDAO.obtenerClienteporUuid(uuid);
+		
+		List<Reserva> listaRservas = reservaDAO.listarPorCliente(n);
+		
+		System.out.println("");
+		
+		if(listaRservas.size() == 0 )
+			return "redirect:/datosClientes?mensaje=El cliente no tiene ninguna reserva";
+		
+		model.addAttribute("listarR", listaRservas);
+		model.addAttribute("trabajadorLogin", (Trabajador)session.getAttribute("trabajadorLogin"));
+		
+		
+		
+		
+		return ("misReservas");
+		
+	}*/
+	
+	
+	/*@RequestMapping(value = "/contabilidad", method = RequestMethod.GET)
+	public String contabilidad(Model model, HttpServletRequest request ,HttpSession session) {
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		Trabajador trabajador = (Trabajador)session.getAttribute("trabajadorLogin");
+		
+		if(trabajador.getTipoAcceso() != 2)
+		 return "redirect:/homeTrabajador?mensaje=No tiene el tipo de autorizacion para entrar aqui";
+		
+		List<Reserva> nReserva = reservaDAO.listarTodos();
+		
+		double total = 0;
+		
+		for (Reserva reserva : nReserva) {
+			total = total + reserva.getPrecioAPagar();
+		}
+		
+		model.addAttribute("listaReservas", nReserva );
+		model.addAttribute("total", total);
+				
+		return ("contabilidad");
+		
+	}*/
+	
+	
+/*	@RequestMapping(value="/confirmarReservaTrabajador", method = RequestMethod.POST)
+	public String confirmarReservaTrabajador(Model model, HttpServletRequest request, HttpSession session) {
+
+		
+		
+		if(noLogueadoTrabajador(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/loginTrabajador?mensaje=Debe iniciar Sesion para continuar";
+		}
+		String correoCliente = request.getParameter("correo");
+		
+		Cliente cliente = clienteDAO.obtenerClienteporCorreo(correoCliente);
+		
+
+		if(cliente == null) {
+			return "redirect:/homeTrabajador?mensaje=Correo de Cliente Erroneo";
+		}	
+		
+		if(cliente.getTipoAcceso() == 0)
+			return "redirect:/homeTrabajador?mensaje=El cliente no ha verificado su cuenta aun";
+			
+		Trabajador trabajador = (Trabajador)session.getAttribute("trabajadorLogin");	
+		
+		int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
+		Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorId(idHabitacion);
+		String fechaEntrada = request.getParameter("fechaEntrada");
+		String fechaSalida =  request.getParameter("fechaSalida");
+		
+		String tipoPago =request.getParameter("tipoPago");
+		
+		//INICIO COMPROBACIONES DE FECHA
+		
+		boolean fechaCorrecta = compruebaFechas(fechaEntrada, fechaSalida);
+		
+		if(!compruebaFechas(fechaEntrada, fechaSalida)) {
+			return "redirect:/homeTrabajador?mensaje=Fecha de Salida Incorrecta vuelva a intentarlo";
+		}
+		
+		if (!comrpuebaHabitacionLibre(fechaEntrada, fechaSalida, habitacionReservar.getIdHabitacion(), habitacionReservar.getNumeroHab())) {
+			 return "redirect:/homeTrabajador?mensaje=Todas las habitaciones estan ocupadas por al menos un dia en concreto, vuelva a intentarlo";
+		}
+		
+		
+		//FIN COMPROBACIONES DE FECHA
+		
+		double precioApagar = precioFecha(fechaEntrada, fechaSalida ,habitacionReservar.getTipoHabitacion());
+		
+		
+		
+		Reserva nuevaReserva = new Reserva(cliente, trabajador, habitacionReservar, fechaEntrada, fechaSalida, precioApagar, tipoPago, uuidAleatorio());
+		
+		reservaDAO.insertarReserva(nuevaReserva);
+		
+		try {
+			enviarMailReserva(cliente, nuevaReserva);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		return "redirect:/homeTrabajador?mensaje=Reserva Realizada Con exito, no olvide revisar el correo";
+	}*/
 	
 	
 	
