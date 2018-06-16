@@ -146,8 +146,31 @@ h5 {
 						<div class="cols-sm-10">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-users fa"
-									aria-hidden="true"></i></span> <input type="number" class="form-control"
-									name="tipoAcceso" id="tipoAcceso" required="required" value="${trabajadorCambiar.tipoAcceso}"  min="1" max="2" placeholder="Escribe tipo Acceso" />
+									aria-hidden="true"></i></span> 
+									
+									<select class="form-control" name="tipoAcceso" required="required">
+									
+									<c:if test="${trabajadorCambiar.tipoAcceso == 0}">
+									<option selected value="0">Deshabilitado</option>
+									<option value="2">Administrador</option>
+									<option value="1">Trabajador</option>
+									</c:if>
+
+									<c:if test="${trabajadorCambiar.tipoAcceso == 1}">
+									<option selected value="1">Trabajador</option>
+									<option value="2">Administrador</option>
+									<option value="0">Deshabilitado</option>
+									</c:if>
+									
+									<c:if test="${trabajadorCambiar.tipoAcceso == 2}">
+									<option selected value="2">Administrador</option>
+									<option value="0">Deshabilitado</option>
+									<option value="1">Trabajador</option>
+									</c:if>
+									</select>
+									
+									
+									
 							</div>
 						</div>
 					</div>

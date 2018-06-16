@@ -238,6 +238,12 @@ public class HomeController {
 
 		Cliente n = (Cliente)session.getAttribute("clienteLogin");	
 		
+		if(noLogueado(session)) {
+			model.addAttribute("errorLogin","Inicie sesión para entrar");
+			return "redirect:/?mensaje=Debe iniciar Sesion para continuar";
+		}
+		
+		
 		int idHabitacion = Integer.parseInt(request.getParameter("idHabitacion"));
 		Habitacion habitacionReservar = habitacionDAO.obtenerHabitacionPorId(idHabitacion);
 		String fechaEntrada = request.getParameter("fechaEntrada");
